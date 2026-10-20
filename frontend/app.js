@@ -22,6 +22,7 @@ let state = {
   googleDocText: null,
   mcpActions: [],
   tools: [],
+  mcpExecuted: false,
   isApiKeyActive: false
 };
 
@@ -99,6 +100,24 @@ async function goToStep(step) {
   // Validation: require reviews for step >= 2
   if (step >= 2 && !state.reviewsLoaded) {
     showToast('Please harvest customer reviews first in Step 1', 'info');
+    return;
+  }
+
+  // Validation: require analysis for step >= 3
+  if (step >= 3 && !state.analysis) {
+    showToast('Please run AI analysis in Step 2 first', 'info');
+    return;
+  }
+
+  // Validation: require synthesized content for step >= 4
+  if (step >= 4 && !state.content) {
+    showToast('Please synthesize deliverables in Step 3 first', 'info');
+    return;
+  }
+
+  // Validation: require human MCP authorization before advancing to Step 5
+  if (step === 5 && !state.mcpExecuted) {
+    showToast('Phase 05 is locked: Human authorization in Phase 04 is required to generate deliverables', 'warning');
     return;
   }
 
@@ -181,7 +200,7 @@ function updateWizardNavFooter(step) {
     } else if (step === 3) {
       nextBtnText.textContent = state.content ? 'Next: Review & Approve →' : 'Synthesize Mail & Docs →';
     } else if (step === 4) {
-      nextBtnText.textContent = 'Review & Approve (Execute via MCP) →';
+      nextBtnText.textContent = 'Authorize & Execute All (MCP) →';
     } else if (step === 5) {
       nextBtnText.textContent = 'Complete Workflow ✓';
     }
@@ -210,12 +229,7 @@ async function handleNextStepClick() {
       await runGeneration();
     }
   } else if (cur === 4) {
-    const hasApproved = state.mcpActions && state.mcpActions.some(a => a.status === 'approved');
-    if (hasApproved) {
-      await executeApproved();
-    } else {
-      await runBothActions();
-    }
+    await authorizeAndExecuteAllMCP();
   } else if (cur === 5) {
     completeWorkflow();
   }
@@ -251,6 +265,7 @@ async function completeWorkflow() {
     googleDocText: null,
     mcpActions: [],
     tools: [],
+    mcpExecuted: false,
     isApiKeyActive: state.isApiKeyActive
   };
 
@@ -975,6 +990,7 @@ function displayMCPApproval(data) {
 
 function renderActionsList(actions) {
   const actionsList = document.getElementById('actionsList');
+  if (!actionsList) return;
   const actionIcons = {
     'append_to_document': ICONS.fileText,
     'update_google_doc_text': ICONS.fileText,
@@ -992,83 +1008,43 @@ function renderActionsList(actions) {
         </div>
         <div class="action-desc">${escapeHtml(a.description)}</div>
       </div>
-      <span class="action-status-badge ${a.status}">${a.status}</span>
-      ${a.status === 'pending' ? `
-        <div class="action-buttons">
-          <button class="btn btn-approve btn-sm" onclick="approveAction('${a.action_id}')">
-            Authorize
-          </button>
-          <button class="btn btn-reject btn-sm" onclick="rejectAction('${a.action_id}')">
-            Reject
-          </button>
-        </div>
-      ` : ''}
+      <span class="action-status-badge ${a.status}">
+        ${a.status === 'pending' ? 'Pending Human Authorization' : (a.status === 'executed' ? 'Executed' : a.status)}
+      </span>
     </div>
   `).join('');
 }
 
-async function approveAction(actionId) {
-  try {
-    const response = await fetch(`${API_BASE}/api/approve-action`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action_id: actionId, approved: true })
-    });
-    
-    if (!response.ok) throw new Error('Authorization failed');
-    
-    state.mcpActions = state.mcpActions.map(a => 
-      a.action_id === actionId ? { ...a, status: 'approved' } : a
-    );
-    
-    renderActionsList(state.mcpActions);
-    showToast(`Action ${actionId} authorized`);
-  } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
-  }
-}
+// ── Unified Human-in-the-Loop Governance: Single Approval for All ───────────
 
-async function rejectAction(actionId) {
-  try {
-    const response = await fetch(`${API_BASE}/api/approve-action`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action_id: actionId, approved: false })
-    });
-    
-    if (!response.ok) throw new Error('Rejection failed');
-    
-    state.mcpActions = state.mcpActions.map(a => 
-      a.action_id === actionId ? { ...a, status: 'rejected' } : a
-    );
-    
-    renderActionsList(state.mcpActions);
-    showToast(`Action ${actionId} rejected`);
-  } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
-  }
-}
-
-
-// ── Step 5: Execute & Live Deliverables Inspector (On-Click Both Run) ─────────
-
-async function runBothActions() {
-  showLoading('Dispatching MCP Actions over stdio JSON-RPC...\n1. Creating team email draft (.eml / .txt)\n2. Synchronizing Google Doc text briefing');
+async function authorizeAndExecuteAllMCP() {
+  showLoading('Connecting to MCP server over stdio transport...\n1. Authorizing tool dispatches\n2. Creating team email draft (.eml)\n3. Updating Google Doc text briefing');
   updateStatus('Executing MCP...', 'processing');
-  
+
   try {
     const response = await fetch(`${API_BASE}/api/run-both-actions`, { method: 'POST' });
     if (!response.ok) {
       const err = await response.json();
-      throw new Error(err.detail || 'Execution failed');
+      throw new Error(err.detail || 'MCP authorization execution failed');
     }
-    
+
     const data = await response.json();
-    displayResults(data);
-    
-    showToast('Both MCP actions executed successfully: Email created & Google Doc updated!');
+    state.mcpExecuted = true;
+    state.maxUnlockedStep = 5;
+
+    const s4Badge = document.getElementById('step4StatusBadge');
+    if (s4Badge) s4Badge.textContent = 'Authorized';
+
+    // Mark actions in state as executed and re-render badges
+    if (state.mcpActions && state.mcpActions.length > 0) {
+      state.mcpActions = state.mcpActions.map(a => ({ ...a, status: 'executed' }));
+      renderActionsList(state.mcpActions);
+    }
+
+    await displayResults(data);
+
+    showToast('All tool dispatches authorized & executed via MCP! Stage 5 deliverables ready.');
     updateStatus('Workflow Complete', '');
-    updateProgress(5);
   } catch (err) {
     showToast(`Execution error: ${err.message}`, 'error');
     updateStatus('Error', 'error');
@@ -1077,36 +1053,74 @@ async function runBothActions() {
   }
 }
 
-async function executeApproved() {
-  const hasApproved = state.mcpActions.some(a => a.status === 'approved');
-  if (!hasApproved) {
-    showToast('No actions have been approved yet. Use "Authorize & Execute Both Actions" to run all.', 'error');
-    return;
-  }
-  
-  showLoading('Executing authorized actions via MCP...');
-  updateStatus('Executing...', 'processing');
-  
+async function rejectAndResetWorkflow() {
+  showLoading('Declining authorization and resetting pipeline...');
+  updateStatus('Resetting...', 'processing');
+
   try {
-    const response = await fetch(`${API_BASE}/api/execute-actions`, { method: 'POST' });
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.detail || 'Execution failed');
+    await fetch(`${API_BASE}/api/reset`, { method: 'POST' });
+
+    state = {
+      currentStep: 1,
+      maxUnlockedStep: 1,
+      step: 1,
+      selectedStore: 'both',
+      selectedReviewCount: 500,
+      reviewsLoaded: false,
+      reviews: null,
+      analysis: null,
+      content: null,
+      payload: null,
+      emailDraft: null,
+      googleDocText: null,
+      mcpActions: [],
+      tools: [],
+      mcpExecuted: false,
+      isApiKeyActive: state.isApiKeyActive
+    };
+
+    const preview = document.getElementById('reviewsPreview');
+    if (preview) preview.style.display = 'none';
+
+    const actionsList = document.getElementById('actionsList');
+    if (actionsList) actionsList.innerHTML = '';
+
+    const liveEmailText = document.getElementById('liveEmailText');
+    if (liveEmailText) liveEmailText.textContent = '';
+
+    const liveDocText = document.getElementById('liveDocText');
+    if (liveDocText) liveDocText.textContent = '';
+
+    const resultsGrid = document.getElementById('resultsGrid');
+    if (resultsGrid) resultsGrid.innerHTML = '';
+
+    // Reset wizard sidebar indicators and badges
+    for (let i = 1; i <= 5; i++) {
+      const badge = document.getElementById(`step${i}StatusBadge`);
+      if (badge) badge.textContent = `Step 0${i}`;
+      const btn = document.getElementById(`wizardStepBtn${i}`);
+      if (btn) btn.classList.remove('active', 'completed');
     }
-    
-    const data = await response.json();
-    displayResults(data);
-    
-    showToast('Approved actions dispatched successfully!');
-    updateStatus('Workflow Complete', '');
-    updateProgress(5);
+    const datasetStat = document.getElementById('sidebarDatasetStat');
+    if (datasetStat) datasetStat.textContent = '0 Reviews Loaded';
+    const storeStat = document.getElementById('sidebarStoreStat');
+    if (storeStat) storeStat.textContent = 'Play Store • App Store';
+
+    goToStep(1);
+    updateStatus('Ready', '');
+    showToast('MCP authorization rejected. Workflow has been reset to Phase 1.', 'warning');
   } catch (err) {
-    showToast(`Execution error: ${err.message}`, 'error');
-    updateStatus('Error', 'error');
+    showToast(`Reset error: ${err.message}`, 'error');
   } finally {
     hideLoading();
   }
 }
+
+// Aliases for unified single approval
+const runBothActions = authorizeAndExecuteAllMCP;
+const executeApproved = authorizeAndExecuteAllMCP;
+const approveAction = authorizeAndExecuteAllMCP;
+const rejectAction = rejectAndResetWorkflow;
 
 async function displayResults(data) {
   const resultsGrid = document.getElementById('resultsGrid');
@@ -1482,6 +1496,7 @@ async function resetWorkflow() {
       googleDocText: null,
       mcpActions: [],
       tools: [],
+      mcpExecuted: false,
       isApiKeyActive: state.isApiKeyActive
     };
     

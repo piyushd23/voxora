@@ -622,6 +622,9 @@ async def approve_and_execute_all():
 @app.get("/api/doc-text")
 async def get_google_doc_text():
     """Get the current content of the Google Doc text update."""
+    if workflow_state.get("step") != "completed":
+        return {"content": "Google Doc text will be generated upon Phase 04 authorization.", "source": None}
+
     doc_path = os.path.join(OUTPUTS_DIR, "google_doc_weekly_pulse.txt")
     if os.path.exists(doc_path):
         with open(doc_path, "r", encoding="utf-8") as f:
@@ -638,6 +641,17 @@ async def get_google_doc_text():
 @app.get("/api/doc-view", response_class=HTMLResponse)
 async def view_google_doc_html():
     """Render a clean, minimal document reader view of the weekly pulse document."""
+    if workflow_state.get("step") != "completed":
+        return HTMLResponse(
+            "<!DOCTYPE html><html><head><title>Voxora — Document Not Authorized</title>"
+            "<style>body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f8fafc;color:#475569;text-align:center;}"
+            ".box{background:#fff;border:1px solid #e2e8f0;padding:2.5rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);max-width:480px;}"
+            "h2{color:#0f172a;margin-top:0;}p{color:#64748b;font-size:0.95rem;line-height:1.5;}</style></head>"
+            "<body><div class='box'><h2>Phase 04 Authorization Required</h2>"
+            "<p>This document briefing has not been authorized yet. Please return to Phase 04 in Voxora and authorize MCP tool dispatches.</p>"
+            "</div></body></html>",
+            status_code=200
+        )
     content = ""
     title = "Weekly Product Pulse — Notes & Document View"
     doc_path = os.path.join(OUTPUTS_DIR, "google_doc_weekly_pulse.txt")
@@ -941,6 +955,8 @@ async def view_google_doc_html():
 @app.get("/api/email-text")
 async def get_email_text():
     """Get the latest email draft content."""
+    if workflow_state.get("step") != "completed":
+        return {"content": "Email draft will be generated upon Phase 04 authorization."}
     email_path = os.path.join(OUTPUTS_DIR, "email_draft_latest.txt")
     if os.path.exists(email_path):
         with open(email_path, "r", encoding="utf-8") as f:
@@ -948,9 +964,10 @@ async def get_email_text():
     return {"content": "No email draft created yet."}
 
 
+@app.post("/api/reject-all")
 @app.post("/api/reset")
 async def reset_workflow():
-    """Reset the entire workflow to start fresh."""
+    """Reset the entire workflow to start fresh and remove lingering deliverables."""
     global mcp_client
 
     try:
@@ -971,6 +988,21 @@ async def reset_workflow():
         "mcp_actions": [],
         "step": "idle"
     })
+
+    # Clean up generated deliverables so no old doc or email text leaks into unapproved states
+    deliverables = [
+        "google_doc_weekly_pulse.txt",
+        "google_doc_weekly_pulse.docx",
+        "weekly_pulse.md",
+        "email_draft_latest.txt"
+    ]
+    for d in deliverables:
+        p = os.path.join(OUTPUTS_DIR, d)
+        if os.path.exists(p):
+            try:
+                os.remove(p)
+            except Exception:
+                pass
 
     return {"status": "success", "message": "Workflow reset."}
 
