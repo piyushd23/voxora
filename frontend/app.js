@@ -1532,7 +1532,7 @@ let activeKeyTab = 'grok';
 
 function switchApiKeyTab(provider) {
   activeKeyTab = provider;
-  ['grok', 'openai', 'gemini'].forEach(p => {
+  ['grok', 'openai', 'claude', 'gemini'].forEach(p => {
     const tab = document.getElementById(`tab${p.charAt(0).toUpperCase() + p.slice(1)}`);
     const panel = document.getElementById(`panel${p.charAt(0).toUpperCase() + p.slice(1)}`);
     if (tab) tab.classList.toggle('active', p === provider);
@@ -1550,9 +1550,13 @@ async function checkApiKeyStatus() {
     state.isApiKeyActive = data.is_online;
     
     if (data.is_online) {
-      const pName = data.active_provider === 'grok' 
-        ? 'Grok (xAI)' 
-        : (data.active_provider === 'openai' ? 'OpenAI' : 'Google Gemini');
+      const providerNames = {
+        'grok': 'Grok (xAI)',
+        'openai': 'OpenAI',
+        'claude': 'Claude (Anthropic)',
+        'gemini': 'Google Gemini'
+      };
+      const pName = providerNames[data.active_provider] || data.active_provider;
       
       if (btnText) btnText.textContent = `AI: ${pName}`;
       if (badge) {
@@ -1583,14 +1587,16 @@ function closeApiKeyModal() {
 async function saveApiKey() {
   const grokInput = document.getElementById('grokApiKeyInput');
   const openaiInput = document.getElementById('openaiApiKeyInput');
+  const claudeInput = document.getElementById('claudeApiKeyInput');
   const geminiInput = document.getElementById('geminiApiKeyInput');
 
   const grokKey = grokInput ? grokInput.value.trim() : '';
   const openaiKey = openaiInput ? openaiInput.value.trim() : '';
+  const claudeKey = claudeInput ? claudeInput.value.trim() : '';
   const geminiKey = geminiInput ? geminiInput.value.trim() : '';
 
-  if (!grokKey && !openaiKey && !geminiKey) {
-    showToast('Please enter an API key for Grok, OpenAI, or Google Gemini', 'error');
+  if (!grokKey && !openaiKey && !claudeKey && !geminiKey) {
+    showToast('Please enter an API key for Grok, OpenAI, Claude, or Google Gemini', 'error');
     return;
   }
   
@@ -1602,6 +1608,7 @@ async function saveApiKey() {
       body: JSON.stringify({
         grok_api_key: grokKey || undefined,
         openai_api_key: openaiKey || undefined,
+        claude_api_key: claudeKey || undefined,
         gemini_api_key: geminiKey || undefined,
         preferred_provider: activeKeyTab
       })
@@ -1610,6 +1617,7 @@ async function saveApiKey() {
     showToast(data.message || 'AI configuration activated successfully!');
     if (grokInput) grokInput.value = '';
     if (openaiInput) openaiInput.value = '';
+    if (claudeInput) claudeInput.value = '';
     if (geminiInput) geminiInput.value = '';
     closeApiKeyModal();
     checkApiKeyStatus();

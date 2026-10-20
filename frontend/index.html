@@ -608,9 +608,10 @@
         </div>
 
         <!-- Provider Select Tabs -->
-        <div class="provider-tabs" style="display:flex; gap:0.5rem; margin-bottom:1.15rem;">
+        <div class="provider-tabs" style="display:flex; gap:0.5rem; margin-bottom:1.15rem; flex-wrap:wrap;">
           <button type="button" class="preset-pill active" id="tabGrok" onclick="switchApiKeyTab('grok')">Grok (xAI)</button>
           <button type="button" class="preset-pill" id="tabOpenai" onclick="switchApiKeyTab('openai')">OpenAI</button>
+          <button type="button" class="preset-pill" id="tabClaude" onclick="switchApiKeyTab('claude')">Claude (Anthropic)</button>
           <button type="button" class="preset-pill" id="tabGemini" onclick="switchApiKeyTab('gemini')">Google Gemini</button>
         </div>
 
@@ -633,6 +634,17 @@
           <input type="password" id="openaiApiKeyInput" class="input-field" placeholder="Enter OpenAI API key (sk-...)" />
           <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
             Default model: <code>gpt-4o-mini</code>. Obtain keys at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:underline;">platform.openai.com</a>.
+          </p>
+        </div>
+
+        <!-- Claude Panel -->
+        <div id="panelClaude" class="key-panel" style="display:none;">
+          <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; color:var(--text-main);">
+            Anthropic Claude API Key
+          </label>
+          <input type="password" id="claudeApiKeyInput" class="input-field" placeholder="Enter Claude API key (sk-ant-...)" />
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            Default model: <code>claude-3-5-haiku-20241022</code> (with automatic fallback to <code>claude-3-haiku</code> &amp; <code>claude-3-5-sonnet</code>). Obtain keys at <a href="https://console.anthropic.com/" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:underline;">console.anthropic.com</a>.
           </p>
         </div>
 

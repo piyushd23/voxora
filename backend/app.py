@@ -97,6 +97,7 @@ async def health_check():
 class ConfigUpdateRequest(BaseModel):
     openai_api_key: Optional[str] = None
     grok_api_key: Optional[str] = None
+    claude_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
     preferred_provider: Optional[str] = None
 
@@ -110,7 +111,7 @@ async def get_config():
 
 @app.post("/api/config")
 async def update_config(request: ConfigUpdateRequest):
-    """Update AI API keys dynamically (OpenAI, Grok/xAI, Gemini)."""
+    """Update AI API keys dynamically (OpenAI, Grok/xAI, Claude, Gemini)."""
     env_path = os.path.join(REVIEWS_DIR, ".env")
     env_vars = {}
     if os.path.exists(env_path):
@@ -134,6 +135,13 @@ async def update_config(request: ConfigUpdateRequest):
         os.environ["XAI_API_KEY"] = k
         env_vars["GROK_API_KEY"] = k
         env_vars["XAI_API_KEY"] = k
+
+    if request.claude_api_key is not None and request.claude_api_key.strip():
+        k = sanitize_api_key(request.claude_api_key)
+        os.environ["CLAUDE_API_KEY"] = k
+        os.environ["ANTHROPIC_API_KEY"] = k
+        env_vars["CLAUDE_API_KEY"] = k
+        env_vars["ANTHROPIC_API_KEY"] = k
 
     if request.gemini_api_key is not None and request.gemini_api_key.strip():
         k = sanitize_api_key(request.gemini_api_key)

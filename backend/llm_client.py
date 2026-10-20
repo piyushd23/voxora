@@ -23,6 +23,7 @@ def sanitize_api_key(raw_key: Optional[str]) -> str:
     # Try regex matching known prefixes
     patterns = [
         r"(sk-proj-[a-zA-Z0-9_\-]+)",
+        r"(sk-ant-[a-zA-Z0-9_\-]+)",
         r"(sk-[a-zA-Z0-9_\-]+)",
         r"(xai-[a-zA-Z0-9_\-]+)",
         r"(gsk_[a-zA-Z0-9_\-]+)",
@@ -45,6 +46,7 @@ def get_active_provider_info() -> Dict:
     groq_key = sanitize_api_key(os.getenv("GROQ_API_KEY", ""))
     if not groq_key and grok_key.startswith("gsk_"):
         groq_key = grok_key
+    claude_key = sanitize_api_key(os.getenv("CLAUDE_API_KEY", "") or os.getenv("ANTHROPIC_API_KEY", ""))
     gemini_key = sanitize_api_key(os.getenv("GEMINI_API_KEY", ""))
     preferred = os.getenv("PREFERRED_LLM_PROVIDER", "").strip().lower()
 
@@ -57,6 +59,7 @@ def get_active_provider_info() -> Dict:
     has_openai = bool(openai_key and len(openai_key) > 10 and openai_key != "your-api-key-here")
     has_groq = bool(groq_key and len(groq_key) > 10 and groq_key.startswith("gsk_"))
     has_grok = bool(grok_key and len(grok_key) > 10 and grok_key.startswith("xai-"))
+    has_claude = bool(claude_key and len(claude_key) > 10 and claude_key != "your-api-key-here")
     has_gemini = bool(gemini_key and len(gemini_key) > 10 and gemini_key != "your-api-key-here")
 
     # Determine active provider — offline mode is disabled
@@ -72,6 +75,9 @@ def get_active_provider_info() -> Dict:
     elif preferred == "grok" and has_grok:
         active_provider = "grok"
         active_model = os.getenv("GROK_MODEL", "grok-2-latest")
+    elif preferred == "claude" and has_claude:
+        active_provider = "claude"
+        active_model = os.getenv("CLAUDE_MODEL", "claude-3-5-haiku-20241022")
     elif preferred == "gemini" and has_gemini:
         active_provider = "gemini"
         active_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
@@ -84,6 +90,9 @@ def get_active_provider_info() -> Dict:
     elif has_grok:
         active_provider = "grok"
         active_model = os.getenv("GROK_MODEL", "grok-2-latest")
+    elif has_claude:
+        active_provider = "claude"
+        active_model = os.getenv("CLAUDE_MODEL", "claude-3-5-haiku-20241022")
     elif has_gemini:
         active_provider = "gemini"
         active_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
@@ -99,6 +108,8 @@ def get_active_provider_info() -> Dict:
         "groq_masked": mask(groq_key),
         "has_grok": has_grok,
         "grok_masked": mask(grok_key),
+        "has_claude": has_claude,
+        "claude_masked": mask(claude_key),
         "has_gemini": has_gemini,
         "gemini_masked": mask(gemini_key),
         "is_online": is_configured,
@@ -216,6 +227,72 @@ async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
     return None
 
 
+async def call_claude(
+    api_key: str,
+    prompt: str,
+    model: str = "claude-3-5-haiku-20241022",
+    system_prompt: str = "You are an expert product analyst. Return valid JSON only.",
+    max_tokens: int = 1500
+) -> Optional[str]:
+    """Call Anthropic Claude API via Messages endpoint with automatic model fallback."""
+    import asyncio
+    url = "https://api.anthropic.com/v1/messages"
+    headers = {
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json"
+    }
+
+    candidate_models = []
+    preferred = os.getenv("CLAUDE_MODEL")
+    if preferred and preferred.strip():
+        candidate_models.append(preferred.strip())
+    for m in ["claude-3-5-haiku-20241022", "claude-3-haiku-20240307", "claude-3-5-sonnet-20241022"]:
+        if m not in candidate_models:
+            candidate_models.append(m)
+
+    last_err = None
+    for model_name in candidate_models:
+        payload = {
+            "model": model_name,
+            "system": system_prompt,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "max_tokens": max_tokens,
+            "temperature": 0.2
+        }
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            for attempt in range(2):
+                try:
+                    logger.info(f"Attempting Anthropic Claude generation with model '{model_name}'...")
+                    resp = await client.post(url, headers=headers, json=payload)
+                    resp.raise_for_status()
+                    data = resp.json()
+                    content_blocks = data.get("content", [])
+                    if content_blocks and content_blocks[0].get("text"):
+                        return content_blocks[0]["text"].strip()
+                except httpx.HTTPStatusError as exc:
+                    err_text = exc.response.text
+                    last_err = exc
+                    if exc.response.status_code == 429 and attempt < 1:
+                        await asyncio.sleep(4.0)
+                        continue
+                    if exc.response.status_code == 404 or "not_found_error" in err_text:
+                        logger.warning(f"Claude model '{model_name}' not found, falling back...")
+                        break
+                    logger.error(f"HTTP {exc.response.status_code} from Anthropic: {err_text}")
+                    raise ValueError(f"Anthropic Claude API error: {err_text}")
+                except Exception as e:
+                    last_err = e
+                    break
+
+    if last_err:
+        raise ValueError(f"Claude generation failed on candidate models: {str(last_err)}")
+    return None
+
+
 async def generate_ai_completion(
     prompt: str,
     system_prompt: str = "You are an expert product analyst. Return valid JSON only.",
@@ -226,7 +303,8 @@ async def generate_ai_completion(
     1. Groq if configured
     2. Grok (xAI) if configured
     3. OpenAI if configured
-    4. Gemini if configured
+    4. Claude (Anthropic) if configured
+    5. Gemini if configured
 
     Raises ValueError if no API key is configured (API key is mandatory).
     """
@@ -235,7 +313,7 @@ async def generate_ai_completion(
 
     if provider == "none":
         raise ValueError(
-            "API key is mandatory. Please configure your OpenAI, Grok (xAI), or Google Gemini API key to proceed."
+            "API key is mandatory. Please configure your OpenAI, Grok (xAI), Claude, or Google Gemini API key to proceed."
         )
 
     if provider == "groq":
@@ -297,6 +375,25 @@ async def generate_ai_completion(
         except Exception as e:
             logger.error(f"OpenAI API invocation failed: {e}")
             raise ValueError(f"OpenAI API error: {str(e)}")
+
+    elif provider == "claude":
+        claude_key = sanitize_api_key(os.getenv("CLAUDE_API_KEY") or os.getenv("ANTHROPIC_API_KEY"))
+        model = info["active_model"]
+        logger.info(f"Dispatching prompt to Anthropic Claude with model {model}...")
+        try:
+            result = await call_claude(
+                api_key=claude_key,
+                prompt=prompt,
+                model=model,
+                system_prompt=system_prompt,
+                max_tokens=max_tokens
+            )
+            if result:
+                return result, "claude"
+            raise ValueError("Empty response received from Anthropic Claude API.")
+        except Exception as e:
+            logger.error(f"Claude API invocation failed: {e}")
+            raise ValueError(f"Claude API error: {str(e)}")
 
     elif provider == "gemini":
         gemini_key = sanitize_api_key(os.getenv("GEMINI_API_KEY"))
