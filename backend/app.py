@@ -82,7 +82,13 @@ async def serve_frontend():
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint for cloud platforms."""
-    return {"status": "healthy", "service": "voxora", "version": "2.0.0"}
+    return {
+        "status": "healthy",
+        "service": "voxora",
+        "version": "2.1.0",
+        "default_gemini_model": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        "supported_gemini_models": ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+    }
 
 
 class ConfigUpdateRequest(BaseModel):

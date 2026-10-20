@@ -172,9 +172,9 @@ async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
 
     preferred_model = os.getenv("GEMINI_MODEL")
     candidate_models = []
-    if preferred_model:
-        candidate_models.append(preferred_model)
-    for m in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash"]:
+    if preferred_model and preferred_model.strip():
+        candidate_models.append(preferred_model.strip())
+    for m in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]:
         if m not in candidate_models:
             candidate_models.append(m)
 
@@ -196,15 +196,23 @@ async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
         except Exception as e:
             err_str = str(e)
             last_err = e
-            # If model 404 / not found / deprecated, fall back to next candidate model
-            if "404" in err_str or "NOT_FOUND" in err_str or "not found" in err_str.lower() or "no longer available" in err_str.lower():
-                logger.warning(f"Gemini model '{model_name}' not available ({err_str[:120]}), falling back to next candidate model...")
+            # Catch 404, NOT_FOUND, or deprecated model error
+            is_404 = (
+                "404" in err_str or
+                "NOT_FOUND" in err_str or
+                "not found" in err_str.lower() or
+                "no longer available" in err_str.lower() or
+                getattr(e, "code", None) == 404 or
+                getattr(e, "status_code", None) == 404
+            )
+            if is_404:
+                logger.warning(f"Gemini model '{model_name}' not available ({err_str[:120]}), trying next candidate model...")
                 continue
-            # For other errors (invalid auth, rate limits, etc.), re-raise
+            # For authentication or quota errors, re-raise immediately
             raise e
 
     if last_err:
-        raise last_err
+        raise ValueError(f"Gemini generation failed on all models {candidate_models}: {str(last_err)}")
     return None
 
 
