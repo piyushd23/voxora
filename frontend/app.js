@@ -221,16 +221,55 @@ async function handleNextStepClick() {
   }
 }
 
-function completeWorkflow() {
-  // Navigate immediately to first screen (Step 1)
-  goToStep(1);
-  
+async function completeWorkflow() {
   // Display the workflow completed popup modal
   openWorkflowCompletedModal();
   
   // Update header status badge and dispatch confirmation toast
-  updateStatus('Workflow Complete', '');
-  showToast('Workflow completed successfully! Returned to Phase 01.');
+  updateStatus('Workflow Completed', '');
+  showToast('Workflow completed successfully! Pipeline has been reset.');
+
+  // Reset backend session and local application state
+  try {
+    await fetch(`${API_BASE}/api/reset`, { method: 'POST' });
+  } catch (e) {
+    console.error('Reset error:', e);
+  }
+
+  state = {
+    currentStep: 1,
+    maxUnlockedStep: 1,
+    step: 1,
+    selectedStore: 'both',
+    selectedReviewCount: 500,
+    reviewsLoaded: false,
+    reviews: null,
+    analysis: null,
+    content: null,
+    payload: null,
+    emailDraft: null,
+    googleDocText: null,
+    mcpActions: [],
+    tools: [],
+    isApiKeyActive: state.isApiKeyActive
+  };
+
+  const preview = document.getElementById('reviewsPreview');
+  if (preview) preview.style.display = 'none';
+
+  // Reset wizard sidebar indicators and badges
+  for (let i = 1; i <= 5; i++) {
+    const badge = document.getElementById(`step${i}StatusBadge`);
+    if (badge) badge.textContent = `Step 0${i}`;
+    const btn = document.getElementById(`wizardStepBtn${i}`);
+    if (btn) btn.classList.remove('active', 'completed');
+  }
+  const datasetStat = document.getElementById('sidebarDatasetStat');
+  if (datasetStat) datasetStat.textContent = '0 Reviews Loaded';
+  const storeStat = document.getElementById('sidebarStoreStat');
+  if (storeStat) storeStat.textContent = 'Play Store • App Store';
+
+  goToStep(1);
 }
 
 function openWorkflowCompletedModal() {

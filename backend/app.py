@@ -79,6 +79,12 @@ async def serve_frontend():
     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint for cloud platforms."""
+    return {"status": "healthy", "service": "voxora", "version": "2.0.0"}
+
+
 class ConfigUpdateRequest(BaseModel):
     openai_api_key: Optional[str] = None
     grok_api_key: Optional[str] = None

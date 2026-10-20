@@ -7,6 +7,8 @@
 [![MCP](https://img.shields.io/badge/MCP-1.9-purple?style=flat)](https://modelcontextprotocol.io)
 [![Multi-AI](https://img.shields.io/badge/AI_Engine-Grok_%7C_OpenAI_%7C_Gemini-EA580C?style=flat)](https://github.com/piyushd23/voxora)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/piyushd23/voxora)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?referralCode=&template=https%3A%2F%2Fgithub.com%2Fpiyushd23%2Fvoxora)
 
 ---
 
@@ -112,6 +114,32 @@ python -m uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Open your browser at **[http://localhost:8000](http://localhost:8000)**.
+
+---
+
+## ☁️ Cloud Deployment & Hosting
+
+### Option 1: Render (1-Click Deployment)
+Click the button below to deploy Voxora directly to Render using the preconfigured [`render.yaml`](render.yaml):
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/piyushd23/voxora)
+
+1. Connect your GitHub account and select your repository.
+2. In Environment Variables, enter your `GROK_API_KEY`, `OPENAI_API_KEY`, or `GEMINI_API_KEY`.
+3. Render automatically installs dependencies and starts the FastAPI server.
+
+### Option 2: Railway (1-Click Deployment)
+Click the button below to deploy on Railway using [`railway.toml`](railway.toml) and [`Procfile`](Procfile):
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?referralCode=&template=https%3A%2F%2Fgithub.com%2Fpiyushd23%2Fvoxora)
+
+### Option 3: Docker Container
+Build and run anywhere with Docker:
+
+```bash
+docker build -t voxora .
+docker run -p 8000:8000 -e GEMINI_API_KEY="your-key" voxora
+```
 
 ---
 
