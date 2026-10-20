@@ -1360,16 +1360,20 @@ function openInGoogleDocs(event) {
   // 1. Immediately copy to clipboard with rich formatting
   copyFormattedDocToClipboard(plainText, htmlText);
 
-  // 2. Open Google Docs in a new tab
-  window.open('https://docs.new', '_blank', 'noopener,noreferrer');
-
-  // 3. Show Paste Assistant Modal with guidance
+  // 2. Show Paste Assistant Modal FIRST with copy confirmation and launch button
   const modal = document.getElementById('pasteAssistantModal');
   if (modal) {
     modal.style.display = 'flex';
   }
 
-  showToast('Opening Google Docs! Press ⌘V (or Ctrl+V) in the new tab to paste.');
+  showToast('Briefing copied to clipboard! Click "Open Google Docs" in the modal to proceed.');
+}
+
+function launchGoogleDocsFromModal() {
+  // Launch Google Docs in a new tab
+  window.open('https://docs.new', '_blank', 'noopener,noreferrer');
+  closePasteAssistantModal();
+  showToast('Google Docs opened! Press ⌘V (or Ctrl+V) to paste your briefing.');
 }
 
 function closePasteAssistantModal() {
