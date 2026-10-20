@@ -5,10 +5,13 @@ content generation, and MCP actions with approval gating.
 """
 
 import json
+import logging
 import os
 import sys
 from datetime import date, datetime
 from typing import Optional
+
+logger = logging.getLogger("app")
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
