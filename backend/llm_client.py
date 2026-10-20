@@ -74,7 +74,7 @@ def get_active_provider_info() -> Dict:
         active_model = os.getenv("GROK_MODEL", "grok-2-latest")
     elif preferred == "gemini" and has_gemini:
         active_provider = "gemini"
-        active_model = "gemini-2.5-flash"
+        active_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
     elif has_groq:
         active_provider = "groq"
         active_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
@@ -86,7 +86,7 @@ def get_active_provider_info() -> Dict:
         active_model = os.getenv("GROK_MODEL", "grok-2-latest")
     elif has_gemini:
         active_provider = "gemini"
-        active_model = "gemini-2.5-flash"
+        active_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
     is_configured = active_provider != "none"
 
@@ -164,21 +164,48 @@ async def call_openai_compatible(
 
 
 async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
-    """Call Google Gemini API."""
+    """Call Google Gemini API with automatic fallback across standard models."""
     from google import genai
     from google.genai import types
 
     client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            temperature=0.2,
-            max_output_tokens=4096,
-            response_mime_type="application/json"
-        )
-    )
-    return response.text.strip() if response and response.text else None
+
+    preferred_model = os.getenv("GEMINI_MODEL")
+    candidate_models = []
+    if preferred_model:
+        candidate_models.append(preferred_model)
+    for m in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash"]:
+        if m not in candidate_models:
+            candidate_models.append(m)
+
+    last_err = None
+    for model_name in candidate_models:
+        try:
+            logger.info(f"Attempting Google Gemini generation with model '{model_name}'...")
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.2,
+                    max_output_tokens=4096,
+                    response_mime_type="application/json"
+                )
+            )
+            if response and response.text:
+                return response.text.strip()
+        except Exception as e:
+            err_str = str(e)
+            last_err = e
+            # If model 404 / not found / deprecated, fall back to next candidate model
+            if "404" in err_str or "NOT_FOUND" in err_str or "not found" in err_str.lower() or "no longer available" in err_str.lower():
+                logger.warning(f"Gemini model '{model_name}' not available ({err_str[:120]}), falling back to next candidate model...")
+                continue
+            # For other errors (invalid auth, rate limits, etc.), re-raise
+            raise e
+
+    if last_err:
+        raise last_err
+    return None
 
 
 async def generate_ai_completion(
@@ -265,7 +292,7 @@ async def generate_ai_completion(
 
     elif provider == "gemini":
         gemini_key = sanitize_api_key(os.getenv("GEMINI_API_KEY"))
-        logger.info("Dispatching prompt to Google Gemini (gemini-2.5-flash)...")
+        logger.info(f"Dispatching prompt to Google Gemini ({info['active_model']})...")
         try:
             result = await call_gemini(gemini_key, prompt)
             if result:
