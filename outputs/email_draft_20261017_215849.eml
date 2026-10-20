@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 17, 2026]
+Date: Sat, 17 Oct 2026 21:58:49 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 17, 2026
+
+### Summary
+Customer reviews highlight sharp friction regarding redemption charges, with exit load confusion dominating 90%+ of critical feedback. Core portfolio tracking is well-rated, but unexpected deductions drive 1-star ratings.
+
+### Top Themes
+- Exit Load Misunderstanding: 88 mentions (avg 4.0★). Users experience unexpected deductions upon redemption without prior disclosure.
+- Platform Experience & Support Delays: 9 mentions (avg 1.4★). Widespread confusion that SIPs follow a single folio period rather than per-installment clocks.
+- Returns Discrepancy & Net Payout: 3 mentions (avg 1.3★). Negative reviews cite gaps between displayed returns/XIRR and actual net proceeds.
+
+### Supporting User Quotes
+- "super 👍" — Saiful Sk (4★)
+- "HUF account not opening even after following the process like 100 times.: This is like the most worst..." — Chetan Dhundele (1★)
+- "good" — Rama Krishna Pendor (5★)
+
+### Key Observation
+Users only learn of exit load after redemption confirmation, creating the impression of hidden charges and misleading zero-commission advertising.
+
+### Action Ideas
+- Add a pre-redemption fee breakdown modal showing gross value, exit load, GST, and net payout before confirming.
+- Introduce a visual SIP Maturity Tracker in the portfolio showing which monthly installments are exit-load-free.
+- Place high-visibility exit load duration tags directly on fund detail cards.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.
+  • For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.
+  • Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.
+  • Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.
+  • Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.
+  • Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed.
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-17
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

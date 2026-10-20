@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 17:57:07 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Brokerage & Fees: 150 mentions
+- Customer Support & Account Setup: 120 mentions
+- App Performance & Technical Issues: 80 mentions
+
+### Supporting User Quotes
+- "Brokerage charges very high after 2025... why?..." — Manoj Mandliya
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "Issue with SIP: When we create multiple SIP mandates, instead of debiting once f..." — SS_2903
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge applied only when units are redeemed before the fund’s specified minimum holding period; it is not levied on every redemption after that period.
+  • The applicable percentage varies by scheme type (e.g., equity, debt, hybrid) and is disclosed in the scheme’s offer document; it is not a uniform rate across all categories.
+  • The load is calculated on the gross redemption value (principal plus any accrued gains) and therefore reduces the amount received, not just the profit.
+  • The load is not a hidden fee; it is disclosed in the scheme information memorandum and on transaction statements at the time of purchase and redemption.
+  • For systematic investment plans (SIPs), each installment creates a separate holding period, so an early redemption of a particular installment may attract an exit load even if earlier installments have satisfied the minimum period.
+  • GST at the prevailing rate is applicable on the exit load amount, and the tax is added to the load before deduction from the redemption proceeds.
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

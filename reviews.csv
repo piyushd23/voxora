@@ -1,0 +1,53 @@
+date,reviewer,rating,review_text,source
+2026-08-01,Rajesh K,2,"I redeemed my SIP after 11 months and was shocked to see an exit load of 1% deducted. Nobody told me about this when I invested. Very poor transparency from the app.",Google Play
+2026-08-03,Priya M,1,"Why is there an exit load on my liquid fund? I thought liquid funds have no exit load after 7 days. The app charged me anyway. Feels like a scam.",Google Play
+2026-08-05,Amit S,3,"The app UI is clean but I can't find where to check if my fund has an exit load before investing. This info should be front and center.",App Store
+2026-08-07,Sneha R,2,"Redeemed my ELSS fund early and got hit with exit load AND tax. The app never warned me. Need better alerts before redemption.",Google Play
+2026-08-09,Vikram D,4,"Good app overall. Portfolio tracking is solid. But the SIP modification flow is confusing — took me 5 tries to change my SIP amount.",App Store
+2026-08-11,Neha P,1,"I was charged exit load on a fund I held for over a year. Customer support says it's because I did SIP and each installment has its own 1-year period. This is EXTREMELY misleading. The app should explain this clearly.",Google Play
+2026-08-14,Rohit G,3,"Decent app but the comparison tool between funds is very basic. Can't compare expense ratios or exit loads side by side.",Google Play
+2026-08-16,Kavita L,2,"The returns shown on the app don't match what I actually received after exit load deduction. Why can't you show net returns after all charges?",App Store
+2026-08-18,Suresh N,5,"Been using this app for 2 years. Great for beginners. Only complaint is the exit load notification comes AFTER you confirm redemption, not before.",Google Play
+2026-08-20,Anjali T,1,"Worst experience. Invested in an overnight fund thinking no charges. Got charged exit load. The fund page shows 'Nil' exit load but fine print says otherwise. Misleading.",Google Play
+2026-08-23,Deepak V,3,"App crashes every time I try to view my capital gains statement. Been happening for 3 weeks now. Please fix.",Google Play
+2026-08-25,Meera S,2,"I don't understand why exit load is calculated on each SIP installment separately. The app makes it seem like if you hold 1 year you're safe, but that's not how it works with SIPs. Very confusing.",App Store
+2026-08-27,Karthik R,4,"Love the goal-based investing feature. But please add exit load information on the fund detail page in a more visible way.",Google Play
+2026-08-29,Pooja H,1,"Customer support is terrible. Waited 4 days for a response about why exit load was charged on my redemption. When they replied it was a generic copy-paste answer.",Google Play
+2026-09-01,Arjun M,3,"The app needs a tax harvesting tool. Also, exit load calculator would be super helpful before redemption.",App Store
+2026-09-03,Divya K,2,"My friend recommended this app but I'm disappointed. The exit load caught me off guard when I tried to withdraw my emergency fund investment after 8 months.",Google Play
+2026-09-05,Manish P,4,"Solid investment platform. Only issue is the app doesn't clearly show which of my SIP installments have completed the exit load period and which haven't.",App Store
+2026-09-07,Ritu S,1,"Exit load is a HIDDEN CHARGE. The app promotes 'zero commission' but doesn't mention exit load prominently. This is deceptive marketing.",Google Play
+2026-09-09,Sanjay B,3,"App performance has been laggy on Android lately. Takes 10+ seconds to load portfolio. Needs optimization.",Google Play
+2026-09-11,Lakshmi V,2,"Tried to redeem for a medical emergency. Got charged 1% exit load because my SIP was only 10 months old. In an emergency, this feels unfair. App should have a way to waive this.",Google Play
+2026-09-13,Arun K,4,"Great app for mutual fund investments. The explore section is excellent. Just wish the exit load details were shown on the investment screen before you click buy.",App Store
+2026-09-15,Swati D,2,"The XIRR calculation seems wrong. My actual returns are much lower than what the app shows. Maybe because exit load isn't factored in?",Google Play
+2026-09-17,Nikhil J,3,"Started SIPs in 5 funds last year. When I tried to withdraw from one, I realized each monthly SIP has its own exit load timer. The app NEVER explained this to me.",App Store
+2026-09-19,Reshma T,1,"Absolute scam! They show 12% returns but after exit load and taxes my actual return was 8%. False advertising.",Google Play
+2026-09-21,Varun G,4,"Clean interface, good fund recommendations. But please add an exit load tracker that shows when each SIP installment becomes exit-load-free.",Google Play
+2026-09-23,Sunita M,2,"I wanted to switch between two funds and was charged exit load on the source fund. The switch feature doesn't warn you about this at all!",Google Play
+2026-09-25,Harish C,3,"The KYC process was smooth. But the app is missing basic features like showing exit load status per SIP installment.",App Store
+2026-09-27,Aarti N,1,"Never investing through this app again. The exit load information is buried in the scheme document PDF. Who reads a 50-page PDF before investing? Put it on the main screen!",Google Play
+2026-09-29,Gaurav S,2,"The returns calculation doesn't account for exit load. This gives users a false sense of how much they'll actually get. Very misleading.",App Store
+2026-10-01,Pallavi R,3,"App is okay for basic investing. But why can't I see a breakdown of all charges including exit load before confirming redemption?",Google Play
+2026-10-03,Rahul D,5,"Best mutual fund app. Using for 3 years. Only suggestion — make exit load info more visible and add a timer for SIP installments.",Google Play
+2026-10-05,Tanvi B,2,"Confused by the exit load policy. My fund says 1% if redeemed within 1 year. But since I do SIP, some units are 13 months old and some are 2 months old. The app redeemed newest units first (FIFO is last in first out apparently?) and charged exit load. Make this clearer!",Google Play
+2026-10-07,Mohan L,1,"Charged exit load on my arbitrage fund redemption after 25 days. The app description said exit load is nil after 15 days but the actual scheme has 30 day exit load. App shows wrong information!",App Store
+2026-10-09,Jyoti A,3,"Good app but needs improvement in showing charges transparently. I had no idea about exit load until it was deducted from my redemption.",Google Play
+2026-10-11,Prakash W,2,"The app sends notifications for NAV updates but never sends a notification about exit load when you're about to redeem. Priorities seem wrong.",Google Play
+2026-10-13,Rekha F,4,"Using the app for 6 months. Like the UI. But I lost money because I didn't know about exit load on my debt fund. Need better investor education within the app.",App Store
+2026-10-15,Vivek U,1,"Misleading app. Shows 'no hidden charges' on the homepage. Exit load IS a hidden charge if you don't disclose it properly before investment. Lost ₹3000 to exit load on a ₹3L redemption.",Google Play
+2026-10-02,Nandini K,2,"The goal planner is nice but it doesn't factor in exit load when projecting returns. So the actual amount you'll get is always less than projected.",Google Play
+2026-10-04,Ashok M,3,"SIP pause feature is great. But the app should also show whether pausing a SIP affects the exit load period calculation.",App Store
+2026-10-06,Shalini R,1,"Uninstalling this app. Tried to redeem ₹50K from my mid-cap fund. Exit load of ₹500 was deducted without ANY warning screen before confirmation. Terrible UX.",Google Play
+2026-10-08,Manoj T,4,"Pretty good app for beginners. Fund recommendations are spot on. Wish there was a way to simulate redemption showing exact exit load and tax before I actually redeem.",App Store
+2026-10-10,Usha P,2,"Customer support doesn't understand exit load policies themselves. I asked why I was charged and they gave me three different explanations in three messages.",Google Play
+2026-10-12,Sameer H,3,"The mandate setup for SIP is seamless. But exit load information is completely absent from the SIP start flow. You only discover it when you try to redeem.",Google Play
+2026-10-14,Bhavna J,1,"I invested in a sectoral fund through this app. Nowhere did it mention the 0.5% exit load within 30 days. I needed the money after 20 days and lost ₹1500. Disgusting.",Google Play
+2026-10-16,Alok Y,3,"App works well most of the time. Had an issue with the biometric login last week. Also, would appreciate if exit load applicability was shown clearly on the fund card in the explore section.",App Store
+2026-08-02,Chitra G,2,"Why does the app show different returns than what my CA calculated? Is exit load being included or excluded? No clarity at all.",Google Play
+2026-08-12,Ramesh B,3,"Switched from another platform. This app is better UI-wise but equally bad at explaining exit loads. Industry-wide problem I guess.",App Store
+2026-08-22,Tara S,1,"My husband and I both invested in the same fund. He redeemed after 13 months — no exit load. I redeemed after 11 months — 1% exit load. The app should have a countdown timer for exit load freedom date!",Google Play
+2026-09-02,Kishore N,4,"Excellent for tracking mutual fund portfolio. NAV updates are real-time. Just needs better exit load visibility.",Google Play
+2026-09-12,Anita R,2,"The app claims to be investor-friendly but hides exit load information in the scheme document link. Most users won't click that. Bad design choice.",Google Play
+2026-09-22,Dinesh P,3,"Returns report is detailed but doesn't break down charges. I want to see: Gross returns, exit load charged, taxes, net returns. Currently only shows gross.",App Store
+2026-10-17,Preeti S,2,"Just discovered that exit load also attracts GST. So it's not just 1% — it's 1% + 18% GST on that 1%. The app mentions NONE of this. Total charges ended up being more than I expected.",Google Play

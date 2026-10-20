@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 17, 2026]
+Date: Sat, 17 Oct 2026 12:02:15 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 17, 2026
+
+### Summary
+Customer feedback across recent reviews reveals severe friction regarding redemption fees, with exit load confusion dominating over 90% of critical reviews. While app navigation and fund discovery are appreciated, unexpected liquidation deductions are directly driving 1-star ratings and support tickets.
+
+### Top Themes
+- Exit Load Misunderstanding: 49 mentions (avg 2.4★). Users experience unexpected deductions upon redemption without prior disclosure.
+- SIP Installment Calculation Confusion: 14 mentions (avg 2.8★). Widespread confusion that SIPs follow a single folio period rather than per-installment clocks.
+- Returns Discrepancy & Net Payout: 10 mentions (avg 2.2★). Negative reviews cite gaps between displayed returns/XIRR and actual net proceeds.
+
+### Supporting User Quotes
+- "I was charged exit load on a fund I held for over a year. Customer support says it's because I did SIP and each installment has its own 1-year period. This is EXTREMELY misleading. The app should explain this clearly." — Neha P (1/5)
+- "I redeemed my SIP after 11 months and was shocked to see an exit load of 1% deducted. Nobody told me about this when I invested. Very poor transparency from the app." — Rajesh K (2/5)
+- "Been using this app for 2 years. Great for beginners. Only complaint is the exit load notification comes AFTER you confirm redemption, not before." — Suresh N (5/5)
+
+### Key Observation
+The primary driver of user dissatisfaction is silent redemption execution. Users are only notified of exit load deductions after confirming redemption, creating perceptions of misleading 'zero commission' marketing.
+
+### Action Ideas
+- Deploy a Pre-Redemption Breakdown modal displaying gross amount, exit load, GST, and net payout prior to confirmation.
+- Add a visual SIP Maturity Tracker in the portfolio dashboard displaying FIFO status for each monthly installment.
+- Update fund detail cards with high-visibility callouts specifying exit load duration and applicable tiers.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.
+  • For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.
+  • Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.
+  • Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.
+  • Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.
+  • Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed.
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-17
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

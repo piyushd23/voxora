@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 17:35:20 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- Fees & Charges: 180 mentions
+- App Performance & Support: 130 mentions
+- SIP & Mandate Issues: 80 mentions
+
+### Supporting User Quotes
+- "Brokerage charges very high after 2025... why?..." — Manoj Mandliya
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "Issue with SIP: When we create multiple SIP mandates, instead of debiting once f..." — SS_2903
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge levied by a mutual fund when units are redeemed before a specified holding period; it does not apply to equity trades or brokerage fees.
+  • The percentage of exit load varies by scheme and is disclosed in the scheme’s offer document; it is not a fixed rate across all funds.
+  • A load is only waived if the redemption occurs after the fund‑specified minimum holding period; the waiver is scheme‑specific and not automatically applied by the platform.
+  • For systematic investment plan (SIP) investors, each installment has its own holding period, so units redeemed from newer installments may still attract an exit load even if earlier installments are beyond the period.
+  • Exit load is calculated on the redemption amount before GST; GST (currently 18%) is then applied to the exit load amount as per tax regulations.
+  • Exit load is distinct from brokerage or transaction fees, which are charged by brokers for buying or selling securities and are unrelated to mutual fund redemption charges.
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

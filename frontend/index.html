@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Voxora — Customer voices. Clear insights. Informed action. Scrape customer reviews from Google Play & Apple App Store (500 to 5,000 volume), cluster themes, and execute MCP actions with approval gating.">
+  <title>Voxora — Customer voices. Clear insights. Informed action.</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23ea580c'/%3E%3Cpath d='M4.5 5L12 19.5L19.5 5' stroke='%23ffffff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M8.5 8L12 14.5L15.5 8' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none' opacity='0.9'/%3E%3Cline x1='12' y1='7' x2='12' y2='10' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Global Application Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4.5L12 20.5L20 4.5"/>
+            <path d="M8 7.5L12 15L16 7.5" stroke-width="2" opacity="0.9"/>
+            <line x1="12" y1="7" x2="12" y2="10" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <div class="logo-name-row">
+            <span class="logo-name">Voxora</span>
+            <span class="logo-type-badge">CX</span>
+          </div>
+          <span class="logo-tag">Customer voices. Clear insights. Informed action.</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" id="apiKeyBtn" onclick="openApiKeyModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <span id="apiKeyBtnText">AI Engine: Checking...</span>
+        </button>
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot"></span>
+          <span class="status-text">Ready</span>
+        </div>
+        <button class="btn btn-ghost" id="resetBtn" onclick="resetWorkflow()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          Reset Pipeline
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Single Page Platform Body: Left 5-Step Wizard + Right Single-Page Workspace -->
+  <div class="platform-body">
+    <!-- Left Sidebar: 5-Step Wizard -->
+    <aside class="wizard-sidebar">
+      <div class="wizard-sidebar-header">
+        <span class="wizard-eyebrow">WORKFLOW PIPELINE</span>
+        <h4 class="wizard-sidebar-title">Execution Stages</h4>
+      </div>
+
+      <nav class="wizard-steps-list">
+        <!-- Step 1 -->
+        <button type="button" class="wizard-step-item active" id="wizardStepBtn1" data-step="1" onclick="goToStep(1)">
+          <div class="wsi-indicator">
+            <span class="wsi-number">1</span>
+            <svg class="wsi-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="wsi-text">
+            <div class="wsi-header">
+              <span class="wsi-title">Loaded Reviews</span>
+              <span class="wsi-badge" id="step1StatusBadge">Step 01</span>
+            </div>
+            <p class="wsi-desc">Customer reviews dataset (500–5,000)</p>
+          </div>
+        </button>
+
+        <!-- Step 2 -->
+        <button type="button" class="wizard-step-item" id="wizardStepBtn2" data-step="2" onclick="goToStep(2)">
+          <div class="wsi-indicator">
+            <span class="wsi-number">2</span>
+            <svg class="wsi-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="wsi-text">
+            <div class="wsi-header">
+              <span class="wsi-title">Themes &amp; Fee Friction</span>
+              <span class="wsi-badge" id="step2StatusBadge">Step 02</span>
+            </div>
+            <p class="wsi-desc">AI clustering &amp; fee confusion detection</p>
+          </div>
+        </button>
+
+        <!-- Step 3 -->
+        <button type="button" class="wizard-step-item" id="wizardStepBtn3" data-step="3" onclick="goToStep(3)">
+          <div class="wsi-indicator">
+            <span class="wsi-number">3</span>
+            <svg class="wsi-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="wsi-text">
+            <div class="wsi-header">
+              <span class="wsi-title">Prepared Mail &amp; Docs</span>
+              <span class="wsi-badge" id="step3StatusBadge">Step 03</span>
+            </div>
+            <p class="wsi-desc">Pulse memo, support guide &amp; email draft</p>
+          </div>
+        </button>
+
+        <!-- Step 4 -->
+        <button type="button" class="wizard-step-item" id="wizardStepBtn4" data-step="4" onclick="goToStep(4)">
+          <div class="wsi-indicator">
+            <span class="wsi-number">4</span>
+            <svg class="wsi-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="wsi-text">
+            <div class="wsi-header">
+              <span class="wsi-title">Review &amp; Approve</span>
+              <span class="wsi-badge" id="step4StatusBadge">Step 04</span>
+            </div>
+            <p class="wsi-desc">Human authorization gate for MCP</p>
+          </div>
+        </button>
+
+        <!-- Step 5 -->
+        <button type="button" class="wizard-step-item" id="wizardStepBtn5" data-step="5" onclick="goToStep(5)">
+          <div class="wsi-indicator">
+            <span class="wsi-number">5</span>
+            <svg class="wsi-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="wsi-text">
+            <div class="wsi-header">
+              <span class="wsi-title">Mail &amp; Docs Side-by-Side</span>
+              <span class="wsi-badge" id="step5StatusBadge">Step 05</span>
+            </div>
+            <p class="wsi-desc">Live synchronized text &amp; dispatches</p>
+          </div>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer Stats -->
+      <div class="wizard-sidebar-footer">
+        <div class="wsf-card">
+          <div class="wsf-title">Active Dataset</div>
+          <div class="wsf-val" id="sidebarDatasetStat">0 Reviews Loaded</div>
+          <div class="wsf-sub" id="sidebarStoreStat">Play Store &bull; App Store</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Workspace: Content Panels Viewport (No Outer Window Scroll) -->
+    <main class="wizard-workspace">
+      <div class="wizard-viewport" id="wizardContentViewport">
+
+    <!-- Step 1: Customer Review Scraper (Dual-Store High-Volume Ingestion) -->
+    <section class="card" id="step1">
+      <div class="card-header">
+        <div class="card-icon accent-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="card-eyebrow">Phase 01 • Review Data Ingestion</span>
+          <h2>Customer Feedback Scraper — Google Play &amp; Apple App Store</h2>
+          <p class="card-subtitle">Harvest live customer reviews in parallel at scale (500, 1,000, or 5,000 reviews)</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="scraper-card">
+          <!-- Store Selector -->
+          <div class="store-selector-group">
+            <label class="scraper-label">Target App Store Source</label>
+            <div class="store-pills" id="storePills">
+              <button type="button" class="store-pill active" data-store="both" onclick="setStoreFilter('both', this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span>All Stores (Google Play + Apple Store)</span>
+              </button>
+              <button type="button" class="store-pill" data-store="google" onclick="setStoreFilter('google', this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Google Play Store</span>
+              </button>
+              <button type="button" class="store-pill" data-store="apple" onclick="setStoreFilter('apple', this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.73-.95 2.76.99.08 2.04-.51 2.68-1.26z"/></svg>
+                <span>Apple App Store</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="scraper-header">
+            <label for="appNameInput" class="scraper-label">App Identifier, Name, or Store Package ID</label>
+            <span class="scraper-hint" id="storeHintText">Scrapes Google Play &amp; Apple Store in parallel</span>
+          </div>
+          
+          <div class="scraper-input-row">
+            <div class="input-with-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="appNameInput" class="input-field" value="Groww" placeholder="Enter app name (e.g. Groww, Zerodha Kite, Coin) or store ID..." />
+            </div>
+
+            <!-- Volume Options: 500, 1000, 5000 reviews -->
+            <div class="count-select-wrap">
+              <select id="reviewCountSelect" class="input-field count-select" title="Volume of reviews to harvest">
+                <option value="500" selected>500 Reviews</option>
+                <option value="1000">1,000 Reviews</option>
+                <option value="5000">5,000 Reviews</option>
+              </select>
+            </div>
+            
+            <button class="btn btn-primary btn-lg" id="getReviewsBtn" onclick="scrapeReviews()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Harvest Reviews</span>
+            </button>
+          </div>
+
+          <!-- Quick Preset Chips -->
+          <div class="preset-pills">
+            <span class="pills-label">Presets:</span>
+            <button type="button" class="preset-pill active" onclick="setAppPreset('Groww', this)">Groww (Mutual Funds)</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('Zerodha Kite', this)">Zerodha Kite</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('Coin', this)">Coin (Mutual Funds)</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('Paytm Money', this)">Paytm Money</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('Angel One', this)">Angel One</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('Upstox', this)">Upstox</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('ET Money', this)">ET Money</button>
+            <button type="button" class="preset-pill" onclick="setAppPreset('INDmoney', this)">INDmoney</button>
+          </div>
+        </div>
+
+        <!-- Optional Collapsible CSV Upload -->
+        <div class="csv-toggle-row">
+          <button type="button" class="btn-link" onclick="toggleCsvUpload()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span id="csvToggleText">Need to upload a custom CSV file instead?</span>
+          </button>
+        </div>
+
+        <div id="customCsvContainer" style="display:none; margin-top:1rem;">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <p>Drag and drop a custom reviews CSV here, or click to browse</p>
+            <input type="file" id="fileInput" accept=".csv" hidden>
+          </div>
+          <div class="upload-actions" style="margin-top:0.75rem;">
+            <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">Browse Local CSV</button>
+          </div>
+        </div>
+
+        <!-- Reviews Preview Table -->
+        <div class="reviews-preview" id="reviewsPreview" style="display:none;">
+          <div class="preview-header">
+            <div>
+              <h3 id="previewTitle">Customer Reviews Dataset</h3>
+              <p class="preview-subtitle" id="previewSubtitle">Showing live verified reviews from connected app stores</p>
+            </div>
+            <div class="preview-badges" id="previewBadges">
+              <span class="badge" id="reviewCount">0 Reviews</span>
+              <span class="badge badge-google" id="googleCountBadge" style="display:none;">0 Google Play</span>
+              <span class="badge badge-apple" id="appleCountBadge" style="display:none;">0 Apple App Store</span>
+            </div>
+          </div>
+
+          <!-- Executive KPI Analytics Grid -->
+          <div class="dataset-stats-grid" id="datasetStatsGrid"></div>
+
+          <!-- Interactive Table Toolbar -->
+          <div class="table-toolbar" id="tableToolbar">
+            <div class="toolbar-search">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="reviewSearchInput" class="toolbar-input" placeholder="Search customer reviews..." oninput="filterReviewsTable()" />
+            </div>
+            <div class="toolbar-filters">
+              <div class="filter-group">
+                <span class="filter-label">Store:</span>
+                <select id="storeFilterSelect" class="toolbar-select" onchange="filterReviewsTable()">
+                  <option value="all">All Stores</option>
+                  <option value="google">Google Play</option>
+                  <option value="apple">Apple App Store</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Rating:</span>
+                <select id="ratingFilterSelect" class="toolbar-select" onchange="filterReviewsTable()">
+                  <option value="all">All Ratings</option>
+                  <option value="1">1-Star Only</option>
+                  <option value="2">2-Stars Only</option>
+                  <option value="3">3-Stars Only</option>
+                  <option value="4">4-Stars Only</option>
+                  <option value="5">5-Stars Only</option>
+                  <option value="negative">Negative (1-2 Stars)</option>
+                  <option value="positive">Positive (4-5 Stars)</option>
+                </select>
+              </div>
+              <span class="filter-count-badge" id="visibleRowCount">Showing 0 reviews</span>
+            </div>
+          </div>
+
+          <div class="preview-table-wrap">
+            <table class="preview-table" id="previewTable">
+              <thead>
+                <tr>
+                  <th style="width: 110px;">Date</th>
+                  <th style="width: 150px;">Reviewer</th>
+                  <th style="width: 100px;">Rating</th>
+                  <th>Customer Feedback</th>
+                  <th style="width: 155px;">Store Source</th>
+                </tr>
+              </thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: AI Analysis Results (Theme Clustering & Fee Misconceptions) -->
+    <section class="card" id="step2" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon accent-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+        </div>
+        <div>
+          <span class="card-eyebrow">Phase 02 • AI Synthesis &amp; Clustering</span>
+          <h2>AI Feedback Intelligence Results</h2>
+          <p class="card-subtitle">Quantitative cluster mapping, representative verbatim quotes, and fee friction detection</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Top Identified Themes -->
+        <div class="section-title">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Key Feedback Themes
+          </h3>
+          <span class="badge" id="allThemesBadge">Clusters Mapped</span>
+        </div>
+        <div class="themes-grid" id="themesGrid"></div>
+
+        <!-- Verbatim Quotes -->
+        <div class="section-title" style="margin-top:2rem;">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Verbatim Customer Quotes
+          </h3>
+        </div>
+        <div class="quotes-grid" id="quotesGrid"></div>
+
+        <!-- Fee Confusion Intelligence Panel -->
+        <div class="section-title" style="margin-top:2rem;">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Fee &amp; Charge Misconceptions
+          </h3>
+        </div>
+        <div class="fee-confusion-card" id="feeConfusionCard"></div>
+      </div>
+    </section>
+
+    <!-- Step 3: Prepared Mail & Docs -->
+    <section class="card" id="step3" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon accent-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div>
+          <span class="card-eyebrow">Phase 03 • Synthesized Briefing</span>
+          <h2>Prepared Mail Draft &amp; Google Doc Briefing</h2>
+          <p class="card-subtitle">Review AI-synthesized executive memo (&le;250 words), support clarification, and team email before governance approval</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 1. Weekly Pulse Document -->
+        <div class="section-title">
+          <div class="section-title-left">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Weekly Executive Product Pulse Memo
+            </h3>
+            <span class="badge badge-green" id="wordCountBadge"></span>
+          </div>
+        </div>
+        <div class="pulse-card" id="pulseContent"></div>
+
+        <!-- 2. Fee Explanation Support Snippet -->
+        <div class="section-title" style="margin-top:2rem;">
+          <div class="section-title-left">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Customer Support Guidance &amp; Regulatory Citations
+            </h3>
+          </div>
+        </div>
+        <div class="explanation-card" id="explanationContent"></div>
+
+        <!-- 3. Prepared Email Preview -->
+        <div class="section-title" style="margin-top:2rem;">
+          <div class="section-title-left">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Prepared Team Email Dispatch
+            </h3>
+          </div>
+        </div>
+        <div class="email-preview" id="emailPreview"></div>
+      </div>
+    </section>
+
+    <!-- Step 4: MCP Approval Gate -->
+    <section class="card" id="step4" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon accent-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <span class="card-eyebrow">Phase 04 • Human-in-the-Loop Governance</span>
+          <h2>Model Context Protocol (MCP) Approval Gate</h2>
+          <p class="card-subtitle">Verify and authorize tool dispatches prior to execution over stdio JSON-RPC</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="mcp-info">
+          <div class="mcp-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            MCP Server Connected via stdio transport protocol
+          </div>
+          <p>
+            Once authorized, MCP executes both tools: <strong>create the email draft</strong> and <strong>update the Google Doc text document</strong>. 
+            No tool dispatch occurs without explicit human authorization.
+          </p>
+        </div>
+
+        <!-- Pending Governance Actions -->
+        <div class="section-title">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Pending Governance Approvals
+          </h3>
+        </div>
+        <div class="actions-list" id="actionsList"></div>
+      </div>
+    </section>
+
+    <!-- Step 5: Mail & Docs Side-by-Side View -->
+    <section class="card" id="step5" style="display:none;">
+      <div class="card-header" style="justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="card-icon accent-orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <span class="card-eyebrow">Phase 05 • Synchronized Deliverables</span>
+            <h2>Mail &amp; Google Doc Text — Side-by-Side View</h2>
+            <p class="card-subtitle">Side-by-side inspection of live synchronized outputs with 1-click dispatch to Gmail and Google Docs</p>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-md" onclick="completeWorkflow()" title="Finish pipeline, display completion summary, and return to first screen">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Complete Workflow</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <!-- MCP Execution Status Grid -->
+        <div class="results-grid" id="resultsGrid"></div>
+
+        <!-- Dual Inspection Cards: Mail & Google Doc -->
+        <div class="dual-output-grid" style="margin-top: 2rem;">
+          <!-- Card 1: Mail Draft -->
+          <div class="output-preview-card">
+            <div class="opc-header">
+              <div class="opc-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <div>
+                  <h4>Team Email Draft Created</h4>
+                  <span class="opc-sub">Generated as .eml and ready for review</span>
+                </div>
+              </div>
+              <div class="opc-actions">
+                <button class="btn btn-primary btn-sm btn-gmail" onclick="openEmailInGmail()" title="Open Gmail composer in a new tab with draft prefilled">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <span>Open in Gmail</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="openEmailInMailClient()" title="Open in default desktop mail client">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <span>Open in Mail</span>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="copyEmailDraftText()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>Copy</span>
+                </button>
+                <a href="/api/outputs/email_draft_latest.txt" target="_blank" class="btn btn-ghost btn-sm" id="downloadEmlBtn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Download .eml</span>
+                </a>
+              </div>
+            </div>
+            <div class="opc-body">
+              <pre class="code-box" id="liveEmailText">Loading email draft...</pre>
+            </div>
+          </div>
+
+          <!-- Card 2: Google Doc Text Update -->
+          <div class="output-preview-card">
+            <div class="opc-header">
+              <div class="opc-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <div>
+                  <h4>Google Doc Text Updated</h4>
+                  <span class="opc-sub">Synchronized to google_doc_weekly_pulse.txt &amp; weekly_pulse.md</span>
+                </div>
+              </div>
+              <div class="opc-actions">
+                <button class="btn btn-primary btn-sm btn-docs" onclick="openInGoogleDocs(event)" title="Open Google Docs in a new tab (copies doc content to clipboard)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  <span>Open in Google Docs</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="openDocumentInNewTab()" title="Open clean reader view in another tab">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  <span>Open Notes / Reader</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="copyGoogleDocText()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>Copy</span>
+                </button>
+                <a href="/api/outputs/google_doc_weekly_pulse.txt" target="_blank" class="btn btn-ghost btn-sm" id="downloadDocBtn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Download</span>
+                </a>
+              </div>
+            </div>
+            <div class="opc-body">
+              <pre class="code-box" id="liveDocText">Loading Google Doc update...</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+      </div>
+
+      <!-- Persistent Single-Page Navigation Footer -->
+      <footer class="wizard-nav-footer">
+        <div class="wnf-left">
+          <button class="btn btn-secondary btn-md" id="prevStepBtn" onclick="goToPreviousStep()" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Previous Step</span>
+          </button>
+        </div>
+
+        <div class="wnf-center">
+          <span class="wnf-step-label" id="footerStepIndicator">Phase 01 of 05 • Multi-Store Review Ingestion</span>
+        </div>
+
+        <div class="wnf-right">
+          <button class="btn btn-primary btn-md" id="nextStepBtn" onclick="handleNextStepClick()">
+            <span id="nextStepBtnText">Next: Run Analysis</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Multi-Provider AI Configuration Modal (Mandatory Key Enforcement) -->
+  <div class="modal-backdrop" id="apiKeyModal" onclick="if(event.target===this) closeApiKeyModal()">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          AI Engine Configuration
+        </div>
+        <button class="modal-close" onclick="closeApiKeyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5; margin-bottom:1rem;">
+          An API key is <strong>mandatory</strong> to execute customer review clustering, quote extraction, executive briefing synthesis, and regulatory fee confusion detection. 
+          Select your provider below.
+        </p>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <span class="api-badge" id="apiKeyStatusBadge">Status: Checking...</span>
+        </div>
+
+        <!-- Provider Select Tabs -->
+        <div class="provider-tabs" style="display:flex; gap:0.5rem; margin-bottom:1.15rem;">
+          <button type="button" class="preset-pill active" id="tabGrok" onclick="switchApiKeyTab('grok')">Grok (xAI)</button>
+          <button type="button" class="preset-pill" id="tabOpenai" onclick="switchApiKeyTab('openai')">OpenAI</button>
+          <button type="button" class="preset-pill" id="tabGemini" onclick="switchApiKeyTab('gemini')">Google Gemini</button>
+        </div>
+
+        <!-- Grok Panel -->
+        <div id="panelGrok" class="key-panel">
+          <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; color:var(--text-main);">
+            Grok (xAI) API Key
+          </label>
+          <input type="password" id="grokApiKeyInput" class="input-field" placeholder="Enter xAI API key (xai-...)" />
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            Default model: <code>grok-2-latest</code> via xAI. Obtain keys at <a href="https://console.x.ai" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:underline;">console.x.ai</a>.
+          </p>
+        </div>
+
+        <!-- OpenAI Panel -->
+        <div id="panelOpenai" class="key-panel" style="display:none;">
+          <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; color:var(--text-main);">
+            OpenAI API Key
+          </label>
+          <input type="password" id="openaiApiKeyInput" class="input-field" placeholder="Enter OpenAI API key (sk-...)" />
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            Default model: <code>gpt-4o-mini</code>. Obtain keys at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:underline;">platform.openai.com</a>.
+          </p>
+        </div>
+
+        <!-- Gemini Panel -->
+        <div id="panelGemini" class="key-panel" style="display:none;">
+          <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; color:var(--text-main);">
+            Google Gemini API Key
+          </label>
+          <input type="password" id="geminiApiKeyInput" class="input-field" placeholder="Enter Gemini API key (AIzaSy...)" />
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            Default model: <code>gemini-2.5-flash</code>. Obtain keys at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:underline;">aistudio.google.com</a>.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeApiKeyModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveApiKey()">Save &amp; Activate API Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Docs Paste Assistant Modal -->
+  <div class="modal-backdrop" id="pasteAssistantModal" onclick="if(event.target===this) closePasteAssistantModal()" style="display:none;">
+    <div class="modal-container" style="max-width:540px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex; align-items:center; gap:0.5rem; color:var(--primary);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Google Doc Opened in New Tab
+        </div>
+        <button class="modal-close" onclick="closePasteAssistantModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
+          <div style="font-weight:600; font-size:0.875rem; color:#c2410c; margin-bottom:0.35rem; display:flex; align-items:center; gap:0.4rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Why is the new Google Doc blank initially?
+          </div>
+          <p style="font-size:0.82rem; color:#9a3412; line-height:1.45; margin:0;">
+            Unlike Gmail, <strong>Google Docs does not accept URL parameters</strong> to insert body text, and browser security prevents websites from typing into external tabs. 
+            Your formatted briefing has been copied to your system clipboard!
+          </p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.25rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.85rem 1rem;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--primary); color:#fff; font-weight:700; font-size:0.8rem;">1</span>
+            <span style="font-size:0.875rem; color:#334155; font-weight:500;">Switch to the newly opened <strong>Google Docs</strong> tab.</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.85rem 1rem;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--primary); color:#fff; font-weight:700; font-size:0.8rem;">2</span>
+            <div style="font-size:0.875rem; color:#334155; font-weight:500;">
+              Press <kbd style="background:#e2e8f0; border:1px solid #cbd5e1; border-radius:4px; padding:2px 7px; font-weight:700; font-size:0.8rem;">⌘ + V</kbd> on Mac or <kbd style="background:#e2e8f0; border:1px solid #cbd5e1; border-radius:4px; padding:2px 7px; font-weight:700; font-size:0.8rem;">Ctrl + V</kbd> on Windows to paste.
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end;">
+          <button class="btn btn-secondary btn-sm" onclick="copyGoogleDocRichAgain(this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Copy Again</span>
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openDocumentInNewTab(); closePasteAssistantModal();">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>Open Notes / Reader</span>
+          </button>
+          <a href="/api/outputs/google_doc_weekly_pulse.docx" target="_blank" class="btn btn-ghost btn-sm" id="modalDocxLink">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Download .docx</span>
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:0.75rem 1.5rem; justify-content:space-between; background:#f8fafc; border-top:1px solid #e2e8f0;">
+        <span style="font-size:0.75rem; color:var(--text-muted);">Formatted with Headings, bullets, and SEBI source links</span>
+        <button class="btn btn-ghost btn-sm" onclick="closePasteAssistantModal()">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workflow Completed Success Modal -->
+  <div class="modal-backdrop" id="workflowCompletedModal" onclick="if(event.target===this) closeWorkflowCompletedModal()" style="display:none;">
+    <div class="modal-container complete-modal-card">
+      <div class="modal-header" style="justify-content:flex-end; border-bottom:none; padding:1rem 1.25rem 0;">
+        <button class="modal-close" onclick="closeWorkflowCompletedModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:0 1.75rem 1.75rem; text-align:center;">
+        <div class="complete-icon-wrap">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3 style="font-size:1.4rem; font-weight:800; color:var(--text-main); margin-bottom:0.4rem; letter-spacing:-0.02em;">Workflow Completed</h3>
+        <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5; margin-bottom:1.35rem;">
+          All customer intelligence pipeline stages have completed successfully. The application has returned to the first screen ready for your next review dataset.
+        </p>
+
+        <!-- Accomplishments Summary Box -->
+        <div class="complete-summary-box">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">
+            Pipeline Deliverables Synchronized
+          </div>
+          
+          <div class="complete-milestone-row">
+            <svg class="complete-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Reviews Harvested:</strong> Scaled customer feedback loaded across Google Play &amp; Apple Store</div>
+          </div>
+          <div class="complete-milestone-row">
+            <svg class="complete-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>AI Themes &amp; Fee Friction:</strong> Clustered feedback with verbatim customer quotes</div>
+          </div>
+          <div class="complete-milestone-row">
+            <svg class="complete-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Executive Briefing:</strong> Synthesized &le;250 word memo &amp; customer support guidance</div>
+          </div>
+          <div class="complete-milestone-row">
+            <svg class="complete-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>MCP Dispatches:</strong> Team email draft created &amp; Google Doc text updated</div>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem;">
+          <button class="btn btn-secondary btn-md" onclick="jumpToDeliverablesFromModal()" title="View side-by-side synchronized outputs">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Review Deliverables</span>
+          </button>
+          <button class="btn btn-primary btn-md" onclick="closeWorkflowCompletedModal()" id="returnFirstScreenModalBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Back to First Screen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <div class="loader-text" id="loaderText">Processing...</div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

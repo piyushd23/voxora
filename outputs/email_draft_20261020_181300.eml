@@ -1,0 +1,50 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 18:13:00 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- Customer Support & Account Onboarding: 150 mentions
+- High Brokerage & Fees: 120 mentions
+- SIP & Transaction Processing: 80 mentions
+
+### Supporting User Quotes
+- "all user, red warning🔥🔥: this broker, very high charges all segment don’t instal..." — Samadhanmore
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "Issue with SIP: When we create multiple SIP mandates, instead of debiting once f..." — SS_2903
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge levied by the mutual fund when units are redeemed before the fund‑specified exit‑load period ends; it does not apply to redemptions made after that period.
+  • The exit‑load period varies by scheme (e.g., 0–30 days, 30–90 days) and is defined in the scheme’s offer document; it is not a universal lock‑in for all funds.
+  • The percentage of exit load differs across schemes (e.g., 0.5% for some equity funds, 1% for certain debt funds) and is disclosed
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

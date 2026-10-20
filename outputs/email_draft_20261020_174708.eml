@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 17:47:08 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Brokerage & Fees: 180 mentions
+- SIP & Transaction Issues: 70 mentions
+- App Performance & Support: 150 mentions
+
+### Supporting User Quotes
+- "Brokerage charges very high after 2025... why?..." — Manoj Mandliya
+- "Issue with SIP: When we create multiple SIP mandates, instead of debiting once f..." — SS_2903
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • An exit load is a charge levied by the mutual fund when units are redeemed before the scheme‑specified holding period expires.
+  • It is a redemption charge imposed by the fund house, not a brokerage fee charged by brokers or platforms.
+  • The load is applied only on early redemptions; holdings that meet or exceed the prescribed period are not subject to the charge.
+  • The applicable percentage is disclosed in the scheme's offer document and is consistent across all distribution channels.
+  • In a SIP, each installment has its own holding period, so redeeming any installment before its individual tenure may attract an exit load.
+  • GST at the prevailing rate is charged on the exit load amount, and the total deduction includes both the load and the GST.
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

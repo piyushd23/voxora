@@ -1,0 +1,52 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 18:59:50 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: Voxora MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Fees & Charges: 150 mentions
+- Customer Support & Account Onboarding: 120 mentions
+- App Performance & Technical Glitches: 100 mentions
+
+### Supporting User Quotes
+- "all user, red warning🔥🔥: this broker, very high charges all segment don’t instal..." — Samadhanmore
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "Issue with SIP: When we create multiple SIP mandates, instead of debiting once f..." — SS_2903
+
+### Key Observation
+Primary user friction stems from Brokerage charges.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Brokerage charges
+### Reusable Support Snippet
+
+  • Brokerage is a fee charged by the broker for executing each trade; it varies per transaction and is not a single flat amount for all trades.
+  • The fee amount is disclosed before order confirmation and appears on the trade confirmation statement; it is not hidden.
+  • Brokerage rates are set by the broker and may differ for equity, derivatives, and mutual fund transactions; mutual fund purchases typically incur a transaction charge rather than traditional brokerage.
+  • Higher brokerage fees are generally linked to the volume or value of the trade, not to a separate platform subscription fee.
+  • For SIPs, each installment is treated as a separate purchase; the exit load is calculated based on the holding period of that specific installment, not the overall SIP tenure.
+  • Exit load, when applicable, is subject to GST at the prevailing rate, and the GST amount is added to the load charged at redemption.
+
+**Official Sources:**
+
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

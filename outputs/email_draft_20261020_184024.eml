@@ -1,0 +1,53 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 18:40:24 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Charges & Brokerage Fees: 180 mentions
+- Customer Support & Account Setup: 130 mentions
+- App Performance & Technical Issues: 90 mentions
+
+### Supporting User Quotes
+- "all user, red warning🔥🔥: this broker, very high charges all segment don’t instal..." — Samadhanmore
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "chart thode slow chal rahai hai..." — Nek Ram
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a fee levied by the mutual fund scheme, not by the investment platform, and is applied only when units are redeemed before the scheme‑specified minimum holding period.
+  • The percentage shown in the app is the fund‑defined exit‑load rate; it does not include GST, brokerage, or any other charges.
+  • GST at the prevailing rate (currently 18%) is charged on the exit‑load amount, and the tax is added to the fee at the time of redemption.
+  • If a scheme declares a zero‑exit‑load, no exit‑load fee is charged regardless of the redemption timing; the fee applies only when the scheme’s offer document lists a non‑zero rate.
+  • For systematic investment plans (SIPs), each installment is treated as a separate investment, so the holding period and applicable exit‑load are calculated individually for each tranche.
+  • The exit‑load
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

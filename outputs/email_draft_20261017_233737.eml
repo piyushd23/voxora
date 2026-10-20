@@ -1,0 +1,52 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 17, 2026]
+Date: Sat, 17 Oct 2026 23:37:37 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 17, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Charges & Fees: 180 mentions
+- App Performance & Technical Issues: 90 mentions
+- Customer Support & Account Onboarding: 100 mentions
+
+### Supporting User Quotes
+- "good but very high charges & taxes..." — Shubham Parmar
+- "Resetting Pin: There is a big issue in resetting pin. OTP takes time to come and..." — JJB@9
+- "Frauds and pathetic service: There product is horrible and your money will be sh..." — Shivamshar
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge levied by the mutual fund when units are redeemed before a specified holding period, as defined in the scheme’s offer document.
+  • The load is applied only at the time of redemption, not for intra‑day transactions; mutual funds do not allow intra‑day exits, so no load is charged for same‑day trades.
+  • The percentage shown in the app reflects the load applicable for the remaining holding period and cannot exceed the maximum rate disclosed in the scheme’s prospectus.
+  • Exit load is a regulatory charge mandated by SEBI, not a hidden fee; the amount and conditions are published in the scheme information document.
+  • For SIPs, each instalment is treated as a separate investment with its own holding
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-17
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

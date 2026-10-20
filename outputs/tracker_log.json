@@ -1,0 +1,658 @@
+{
+  "tracker_name": "ProductPulse Insight Tracker",
+  "created_at": "2026-10-17T12:02:15.341329",
+  "entries": [
+    {
+      "id": "PP-0001",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "SIP Installment Calculation Confusion",
+          "Returns Discrepancy & Net Payout"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T12:02:15.341336",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0002",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "SIP Installment Calculation Confusion",
+          "Returns Discrepancy & Net Payout"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T12:03:33.374430",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0003",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "Platform Experience & Support Delays"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T12:32:37.456288",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0004",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "Platform Experience & Support Delays"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T21:52:45.404782",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0005",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "Platform Experience & Support Delays",
+          "Returns Discrepancy & Net Payout"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T21:55:44.649836",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0006",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "Platform Experience & Support Delays",
+          "Returns Discrepancy & Net Payout"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T21:58:49.816296",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0007",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "Exit Load Misunderstanding",
+          "Platform Experience & Support Delays",
+          "Returns Discrepancy & Net Payout"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit Load is a statutory charge levied by the Asset Management Company (AMC) if mutual fund units are redeemed before a mandated holding period.",
+          "For Systematic Investment Plans (SIPs), each monthly installment carries its own individual holding clock measured from its unique allotment date.",
+          "Redemptions strictly adhere to First-In, First-Out (FIFO) accounting, liquidating oldest purchased units first.",
+          "Exit load is credited directly back to the fund scheme to safeguard continuing long-term investors, not retained as platform brokerage.",
+          "Applicable Goods and Services Tax (GST) of 18% is levied on the exit load amount as required by statutory tax regulations.",
+          "Certain categories (e.g., overnight funds, liquid funds held past 7 days, or equity funds held past 365 days) carry nil exit load once their holding period is completed."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T22:25:49.859470",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0008",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-17",
+      "data": {
+        "date": "2026-10-17",
+        "top_themes": [
+          "High Charges & Fees",
+          "App Performance & Technical Issues",
+          "Customer Support & Account Onboarding"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied by the mutual fund when units are redeemed before a specified holding period, as defined in the scheme’s offer document.",
+          "The load is applied only at the time of redemption, not for intra‑day transactions; mutual funds do not allow intra‑day exits, so no load is charged for same‑day trades.",
+          "The percentage shown in the app reflects the load applicable for the remaining holding period and cannot exceed the maximum rate disclosed in the scheme’s prospectus.",
+          "Exit load is a regulatory charge mandated by SEBI, not a hidden fee; the amount and conditions are published in the scheme information document.",
+          "For SIPs, each instalment is treated as a separate investment with its own holding"
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-17T23:37:37.790293",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0009",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Brokerage & Fees",
+          "Customer Support & Account Onboarding",
+          "App Reliability & Performance"
+        ],
+        "identified_fee_issue": "Brokerage",
+        "explanation_bullets": [
+          "Brokerage is the fee charged by the broker for executing each purchase or sale of mutual fund units and is calculated per transaction segment, not as a single flat charge on the total investment.",
+          "The fee is disclosed in the transaction statement; GST of 18% is applied on the brokerage amount and shown separately, so there are no hidden taxes beyond the GST.",
+          "Brokerage rates are determined by the broker and may be revised periodically; any change is communicated through official notices and is not applied without prior disclosure.",
+          "Brokerage is distinct from exit load: brokerage is levied at the time of trade, whereas exit load is a redemption charge applied after a specified holding period.",
+          "For SIPs, each installment has its own holding period; if an installment is redeemed before its period ends, the applicable exit load is charged only on that installment.",
+          "GST at 18% is also levied on the exit load amount, and this tax is reflected in the redemption statement."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/invest"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T17:06:46.674244",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0010",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "Fees & Charges",
+          "App Performance & Support",
+          "SIP & Mandate Issues"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied by a mutual fund when units are redeemed before a specified holding period; it does not apply to equity trades or brokerage fees.",
+          "The percentage of exit load varies by scheme and is disclosed in the scheme’s offer document; it is not a fixed rate across all funds.",
+          "A load is only waived if the redemption occurs after the fund‑specified minimum holding period; the waiver is scheme‑specific and not automatically applied by the platform.",
+          "For systematic investment plan (SIP) investors, each installment has its own holding period, so units redeemed from newer installments may still attract an exit load even if earlier installments are beyond the period.",
+          "Exit load is calculated on the redemption amount before GST; GST (currently 18%) is then applied to the exit load amount as per tax regulations.",
+          "Exit load is distinct from brokerage or transaction fees, which are charged by brokers for buying or selling securities and are unrelated to mutual fund redemption charges."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T17:35:20.489659",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0011",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "Fees & Charges",
+          "App Performance & Support",
+          "SIP & Mandate Issues"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied by a mutual fund when units are redeemed before a specified holding period; it does not apply to equity trades or brokerage fees.",
+          "The percentage of exit load varies by scheme and is disclosed in the scheme’s offer document; it is not a fixed rate across all funds.",
+          "A load is only waived if the redemption occurs after the fund‑specified minimum holding period; the waiver is scheme‑specific and not automatically applied by the platform.",
+          "For systematic investment plan (SIP) investors, each installment has its own holding period, so units redeemed from newer installments may still attract an exit load even if earlier installments are beyond the period.",
+          "Exit load is calculated on the redemption amount before GST; GST (currently 18%) is then applied to the exit load amount as per tax regulations.",
+          "Exit load is distinct from brokerage or transaction fees, which are charged by brokers for buying or selling securities and are unrelated to mutual fund redemption charges."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T17:35:33.660246",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0012",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Brokerage & Fees",
+          "SIP & Transaction Issues",
+          "App Performance & Support"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "An exit load is a charge levied by the mutual fund when units are redeemed before the scheme‑specified holding period expires.",
+          "It is a redemption charge imposed by the fund house, not a brokerage fee charged by brokers or platforms.",
+          "The load is applied only on early redemptions; holdings that meet or exceed the prescribed period are not subject to the charge.",
+          "The applicable percentage is disclosed in the scheme's offer document and is consistent across all distribution channels.",
+          "In a SIP, each installment has its own holding period, so redeeming any installment before its individual tenure may attract an exit load.",
+          "GST at the prevailing rate is charged on the exit load amount, and the total deduction includes both the load and the GST."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T17:47:08.270535",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0013",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Brokerage & Fees",
+          "Customer Support & Account Setup",
+          "App Performance & Technical Issues"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge applied only when units are redeemed before the fund’s specified minimum holding period; it is not levied on every redemption after that period.",
+          "The applicable percentage varies by scheme type (e.g., equity, debt, hybrid) and is disclosed in the scheme’s offer document; it is not a uniform rate across all categories.",
+          "The load is calculated on the gross redemption value (principal plus any accrued gains) and therefore reduces the amount received, not just the profit.",
+          "The load is not a hidden fee; it is disclosed in the scheme information memorandum and on transaction statements at the time of purchase and redemption.",
+          "For systematic investment plans (SIPs), each installment creates a separate holding period, so an early redemption of a particular installment may attract an exit load even if earlier installments have satisfied the minimum period.",
+          "GST at the prevailing rate is applicable on the exit load amount, and the tax is added to the load before deduction from the redemption proceeds."
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T17:57:07.318937",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0014",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "Customer Support & Account Onboarding",
+          "High Brokerage & Fees",
+          "SIP & Transaction Processing"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied by the mutual fund when units are redeemed before the fund‑specified exit‑load period ends; it does not apply to redemptions made after that period.",
+          "The exit‑load period varies by scheme (e.g., 0–30 days, 30–90 days) and is defined in the scheme’s offer document; it is not a universal lock‑in for all funds.",
+          "The percentage of exit load differs across schemes (e.g., 0.5% for some equity funds, 1% for certain debt funds) and is disclosed"
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T18:13:00.448297",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0015",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Fees & Charges",
+          "Customer Support & Onboarding",
+          "App Performance & Stability"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied only when units are redeemed before the fund’s specified exit‑load period, not on every transaction.",
+          "The applicable percentage is defined in the scheme’s offer document and can differ between funds; it is not a uniform rate for all mutual funds.",
+          "The load is imposed by the asset management company as disclosed in the scheme’s terms, not by the distribution platform, and the amount is shown in the redemption statement.",
+          "If the redemption occurs after the mandatory holding period (or after the exit‑load period specified for the scheme), no exit load is charged.",
+          "For systematic investment plans, each instalment starts"
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T18:27:28.286020",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0016",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Charges & Brokerage Fees",
+          "Customer Support & Account Setup",
+          "App Performance & Technical Issues"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a fee levied by the mutual fund scheme, not by the investment platform, and is applied only when units are redeemed before the scheme‑specified minimum holding period.",
+          "The percentage shown in the app is the fund‑defined exit‑load rate; it does not include GST, brokerage, or any other charges.",
+          "GST at the prevailing rate (currently 18%) is charged on the exit‑load amount, and the tax is added to the fee at the time of redemption.",
+          "If a scheme declares a zero‑exit‑load, no exit‑load fee is charged regardless of the redemption timing; the fee applies only when the scheme’s offer document lists a non‑zero rate.",
+          "For systematic investment plans (SIPs), each installment is treated as a separate investment, so the holding period and applicable exit‑load are calculated individually for each tranche.",
+          "The exit‑load"
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T18:40:24.624139",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0017",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Fees & Charges",
+          "Customer Support & Account Onboarding",
+          "App Performance & Technical Glitches"
+        ],
+        "identified_fee_issue": "Brokerage charges",
+        "explanation_bullets": [
+          "Brokerage is a fee charged by the broker for executing each trade; it varies per transaction and is not a single flat amount for all trades.",
+          "The fee amount is disclosed before order confirmation and appears on the trade confirmation statement; it is not hidden.",
+          "Brokerage rates are set by the broker and may differ for equity, derivatives, and mutual fund transactions; mutual fund purchases typically incur a transaction charge rather than traditional brokerage.",
+          "Higher brokerage fees are generally linked to the volume or value of the trade, not to a separate platform subscription fee.",
+          "For SIPs, each installment is treated as a separate purchase; the exit load is calculated based on the holding period of that specific installment, not the overall SIP tenure.",
+          "Exit load, when applicable, is subject to GST at the prevailing rate, and the GST amount is added to the load charged at redemption."
+        ],
+        "source_links": []
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T18:59:50.540759",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0018",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Fees & Charges",
+          "Customer Support & Account Onboarding",
+          "App Performance & Technical Glitches"
+        ],
+        "identified_fee_issue": "Brokerage charges",
+        "explanation_bullets": [
+          "Brokerage is a fee charged by the broker for executing each trade; it varies per transaction and is not a single flat amount for all trades.",
+          "The fee amount is disclosed before order confirmation and appears on the trade confirmation statement; it is not hidden.",
+          "Brokerage rates are set by the broker and may differ for equity, derivatives, and mutual fund transactions; mutual fund purchases typically incur a transaction charge rather than traditional brokerage.",
+          "Higher brokerage fees are generally linked to the volume or value of the trade, not to a separate platform subscription fee.",
+          "For SIPs, each installment is treated as a separate purchase; the exit load is calculated based on the holding period of that specific installment, not the overall SIP tenure.",
+          "Exit load, when applicable, is subject to GST at the prevailing rate, and the GST amount is added to the load charged at redemption."
+        ],
+        "source_links": []
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T19:02:07.641184",
+      "status": "logged"
+    },
+    {
+      "id": "PP-0019",
+      "entry_type": "weekly_pulse",
+      "title": "Weekly Pulse — 2026-10-20",
+      "data": {
+        "date": "2026-10-20",
+        "top_themes": [
+          "High Fees & Charges",
+          "Customer Support & Account Setup",
+          "App Performance & Technical Glitches"
+        ],
+        "identified_fee_issue": "Exit Load",
+        "explanation_bullets": [
+          "Exit load is a charge levied only when units are redeemed before the fund‑specified minimum holding period; if the investment is held longer than that period, no exit load is applied.",
+          "The charge is calculated as a percentage of the total redemption value (principal + gains) and is deducted from the amount paid out, not separately from the principal.",
+          "Exit‑load percentages differ by scheme type (e.g., equity, debt, hybrid) and by the length of the holding period; they are not uniform across all mutual funds.",
+          "For systematic investment plans (SIPs), each instalment starts its own holding‑period clock, so an early redemption of a later instalment may attract an exit load even if earlier instalments have matured.",
+          "The exit‑load amount is subject to Goods and Services Tax (GST) at the prevailing rate, which is added to the charge before deduction"
+        ],
+        "source_links": [
+          "https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html",
+          "https://www.amfiindia.com/investor-corner/knowledge-center/exit-load"
+        ]
+      },
+      "priority": "high",
+      "tags": [
+        "weekly-pulse",
+        "exit-load",
+        "fee-confusion",
+        "product-insights"
+      ],
+      "created_at": "2026-10-20T19:12:30.468976",
+      "status": "logged"
+    }
+  ],
+  "last_updated": "2026-10-20T19:12:30.468980"
+}

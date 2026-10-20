@@ -1,0 +1,52 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 19:12:30 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: Voxora MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Fees & Charges: 150 mentions
+- Customer Support & Account Setup: 120 mentions
+- App Performance & Technical Glitches: 80 mentions
+
+### Supporting User Quotes
+- "all user, red warning🔥🔥: this broker, very high charges all segment don’t instal..." — Samadhanmore
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "chart thode slow chal rahai hai..." — Nek Ram
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge levied only when units are redeemed before the fund‑specified minimum holding period; if the investment is held longer than that period, no exit load is applied.
+  • The charge is calculated as a percentage of the total redemption value (principal + gains) and is deducted from the amount paid out, not separately from the principal.
+  • Exit‑load percentages differ by scheme type (e.g., equity, debt, hybrid) and by the length of the holding period; they are not uniform across all mutual funds.
+  • For systematic investment plans (SIPs), each instalment starts its own holding‑period clock, so an early redemption of a later instalment may attract an exit load even if earlier instalments have matured.
+  • The exit‑load amount is subject to Goods and Services Tax (GST) at the prevailing rate, which is added to the charge before deduction
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+

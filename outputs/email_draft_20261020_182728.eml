@@ -1,0 +1,52 @@
+From: product-pulse-bot@company.com
+To: product-team@company.com
+Cc: support-leads@company.com
+Subject: Weekly Product Pulse + Customer Clarification — Mutual Fund App [Oct 20, 2026]
+Date: Tue, 20 Oct 2026 18:27:28 +0530
+Content-Type: text/plain; charset="utf-8"
+X-Draft-Status: draft
+X-Created-By: ProductPulse MCP Server
+
+## Weekly Product Pulse — Week of October 20, 2026
+
+### Summary
+Weekly review intelligence pulse highlights recurring user feedback.
+
+### Top Themes
+- High Fees & Charges: 180 mentions
+- Customer Support & Onboarding: 120 mentions
+- App Performance & Stability: 80 mentions
+
+### Supporting User Quotes
+- "all user, red warning🔥🔥: this broker, very high charges all segment don’t instal..." — Samadhanmore
+- "Demat account creation took 2 months and still didn’t get created: This has to b..." — Uttam1101
+- "chart thode slow chal rahai hai..." — Nek Ram
+
+### Key Observation
+Primary user friction stems from Exit Load.
+
+### Action Ideas
+- Deploy clear pre-transaction fee calculator modal.
+- Add visual holding period indicators on investment portfolios.
+- Update onboarding documentation with statutory fee explanations.
+
+---
+
+## Fee Clarification: Exit Load
+### Reusable Support Snippet
+
+  • Exit load is a charge levied only when units are redeemed before the fund’s specified exit‑load period, not on every transaction.
+  • The applicable percentage is defined in the scheme’s offer document and can differ between funds; it is not a uniform rate for all mutual funds.
+  • The load is imposed by the asset management company as disclosed in the scheme’s terms, not by the distribution platform, and the amount is shown in the redemption statement.
+  • If the redemption occurs after the mandatory holding period (or after the exit‑load period specified for the scheme), no exit load is charged.
+  • For systematic investment plans, each instalment starts
+
+**Official Sources:**
+  - https://www.sebi.gov.in/legal/circulars/jun-2009/exit-load-mutual-funds_3555.html
+  - https://www.amfiindia.com/investor-corner/knowledge-center/exit-load
+
+**Last checked:** 2026-10-20
+
+---
+_This is an auto-generated draft from the Product Pulse workflow. Please review before sending._
+
