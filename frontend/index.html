@@ -326,6 +326,22 @@
         </div>
       </div>
       <div class="card-body">
+        <!-- Analysis error panel (persistent until retry succeeds) -->
+        <div class="stage-error-panel" id="analysisErrorPanel" role="alert" style="display:none;">
+          <div class="stage-error-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="stage-error-content">
+            <h4 id="analysisErrorTitle">Analysis couldn't be completed</h4>
+            <p id="analysisErrorMessage"></p>
+            <p class="stage-error-hint" id="analysisErrorHint"></p>
+            <div class="stage-error-actions">
+              <button type="button" class="btn btn-primary btn-sm" id="analysisRetryBtn" onclick="runAnalysis()">Retry Analysis</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="analysisSettingsBtn" onclick="openApiKeyModal()" style="display:none;">Open API Settings</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Top Identified Themes -->
         <div class="section-title">
           <h3>

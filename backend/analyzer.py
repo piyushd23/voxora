@@ -18,28 +18,32 @@ from dotenv import load_dotenv
 from models import (
     Review, Theme, UserQuote, FeeConfusion, AnalysisResult
 )
-from llm_client import generate_ai_completion, get_active_provider_info
+from llm_client import generate_ai_completion, get_active_provider_info, LLMError
 
 load_dotenv()
 logger = logging.getLogger("analyzer")
 
 
 def load_reviews_from_csv(filepath: str) -> List[Review]:
-    """Load and parse reviews from a CSV file."""
+    """Load and parse reviews from a CSV file, skipping rows without review text."""
     reviews = []
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            row = {(k or "").strip().lower(): (v or "") for k, v in row.items()}
+            text = row.get("review_text", "").strip()
+            if not text:
+                continue
             try:
-                rating_val = int(row["rating"].strip())
+                rating_val = min(5, max(1, int(float(row.get("rating", "3").strip()))))
             except Exception:
                 rating_val = 3
             reviews.append(Review(
-                date=row["date"].strip(),
-                reviewer=row["reviewer"].strip(),
+                date=row.get("date", "").strip() or "Unknown",
+                reviewer=row.get("reviewer", "").strip() or "Anonymous",
                 rating=rating_val,
-                review_text=row["review_text"].strip(),
-                source=row["source"].strip()
+                review_text=text,
+                source=row.get("source", "").strip() or "Unknown"
             ))
     return reviews
 
@@ -55,7 +59,8 @@ def aggregate_dataset_metrics(reviews: List[Review]) -> Dict:
             "rating_dist": {}, "store_dist": {}, "keyword_frequencies": {}
         }
 
-    date_range = f"{reviews[0].date} to {reviews[-1].date}"
+    known_dates = sorted(r.date for r in reviews if r.date and r.date != "Unknown")
+    date_range = f"{known_dates[0]} to {known_dates[-1]}" if known_dates else "N/A"
     ratings = [r.rating for r in reviews]
     avg_rating = round(sum(ratings) / total, 2)
 
@@ -225,74 +230,177 @@ async def analyze_reviews(reviews: List[Review]) -> AnalysisResult:
 
 Return ONLY valid JSON. Do not include markdown codeblocks or commentary."""
 
-    raw_result, provider_used = await generate_ai_completion(
-        prompt=prompt,
-        system_prompt="You are a senior product intelligence AI. Return strictly valid JSON.",
-        max_tokens=2000
-    )
+    last_error = ""
+    for attempt in range(2):
+        attempt_prompt = prompt if attempt == 0 else (
+            prompt + f"\n\nYour previous answer was invalid ({last_error}). "
+            "Return the COMPLETE JSON object with every key from the schema, keeping descriptions short."
+        )
+        raw_result, provider_used = await generate_ai_completion(
+            prompt=attempt_prompt,
+            system_prompt="You are a senior product intelligence AI. Return strictly valid JSON.",
+            max_tokens=4000
+        )
+        result_data = _parse_json_object(raw_result)
+        problem = _missing_required(result_data)
+        if not problem:
+            break
+        last_error = problem
+        logger.warning(f"Analysis attempt {attempt + 1} from {provider_used} unusable: {problem}")
+    else:
+        # Keep whatever usable themes we got; fail only if there is nothing to show
+        if not isinstance(result_data, dict) or not _valid_themes(result_data.get("themes")):
+            raise LLMError(
+                "invalid_output",
+                "The AI returned an incomplete analysis twice. Please retry — this is usually temporary.",
+                provider_used, True, last_error
+            )
 
-    result_text = raw_result.strip()
-    if "```json" in result_text:
-        result_text = result_text.split("```json")[1].split("```")[0].strip()
-    elif "```" in result_text:
-        result_text = result_text.split("```")[1].split("```")[0].strip()
+    result = _normalize_analysis(result_data, metrics, sampled_reviews)
+    logger.info(f"AI review analysis completed successfully using provider: {provider_used}")
+    return result
 
-    # Extract JSON object matching { ... }
-    m = re.search(r"(\{.*\})", result_text, re.DOTALL)
+
+def _parse_json_object(raw: str):
+    """Extract a JSON object from a model response, tolerating code fences and minor syntax errors."""
+    text = (raw or "").strip()
+    if "```json" in text:
+        text = text.split("```json")[1].split("```")[0].strip()
+    elif "```" in text:
+        text = text.split("```")[1].split("```")[0].strip()
+    m = re.search(r"(\{.*\})", text, re.DOTALL)
     if m:
-        result_text = m.group(1).strip()
-
+        text = m.group(1).strip()
+    try:
+        return json.loads(text)
+    except Exception:
+        pass
     try:
         import json_repair
-        result_data = json_repair.loads(result_text)
+        data = json_repair.loads(text)
+        if isinstance(data, str):
+            data = json_repair.loads(data)
+        return data
     except Exception:
-        result_data = json.loads(result_text)
+        return None
 
-    if isinstance(result_data, str):
-        try:
-            import json_repair
-            parsed = json_repair.loads(result_data)
-            if isinstance(parsed, dict):
-                result_data = parsed
-        except Exception:
-            pass
 
-    # Normalize top_themes if model returned strings or partial objects
-    if isinstance(result_data, dict):
-        themes_list = result_data.get("themes", [])
-        themes_by_name = {
-            t.get("name", "").strip().lower(): t
-            for t in themes_list
-            if isinstance(t, dict) and t.get("name")
-        }
+def _valid_themes(themes) -> bool:
+    return isinstance(themes, list) and any(isinstance(t, dict) and t.get("name") for t in themes)
 
-        raw_top = result_data.get("top_themes", [])
-        normalized_top = []
-        for item in raw_top:
-            if isinstance(item, dict) and item.get("name"):
-                normalized_top.append(item)
-            elif isinstance(item, str) and item.strip():
-                matched = themes_by_name.get(item.strip().lower())
-                if matched:
-                    normalized_top.append(matched)
-                else:
-                    normalized_top.append({
-                        "name": item.strip(),
-                        "description": f"Customer feedback regarding {item.strip()}",
-                        "review_count": max(10, metrics["total"] // 10),
-                        "avg_rating": 2.5,
-                        "sentiment": "negative",
-                        "sample_keywords": [item.strip().lower()]
-                    })
 
-        if len(normalized_top) < 3 and themes_list:
-            for t in themes_list:
-                if t not in normalized_top and isinstance(t, dict):
-                    normalized_top.append(t)
-                if len(normalized_top) >= 3:
-                    break
+def _missing_required(data) -> str:
+    """Describe what is missing from a parsed analysis, or '' if it is complete."""
+    if not isinstance(data, dict):
+        return "response was not a JSON object"
+    missing = []
+    if not _valid_themes(data.get("themes")):
+        missing.append("themes")
+    if not isinstance(data.get("fee_confusion"), dict) or not data["fee_confusion"].get("fee_name"):
+        missing.append("fee_confusion")
+    if not isinstance(data.get("user_quotes"), list) or not data["user_quotes"]:
+        missing.append("user_quotes")
+    return f"missing or empty: {', '.join(missing)}" if missing else ""
 
-        result_data["top_themes"] = normalized_top[:3]
 
-    logger.info(f"AI review analysis completed successfully using provider: {provider_used}")
-    return AnalysisResult(**result_data)
+def _to_int(value, default: int = 0) -> int:
+    try:
+        return int(float(str(value).replace(",", "").strip("~+ ")))
+    except Exception:
+        return default
+
+
+def _to_float(value, default: float = 0.0) -> float:
+    try:
+        return round(float(str(value).strip("~+ ")), 2)
+    except Exception:
+        return default
+
+
+def _normalize_theme(t, total: int) -> Optional[Dict]:
+    if isinstance(t, str) and t.strip():
+        t = {"name": t.strip()}
+    if not isinstance(t, dict) or not str(t.get("name", "")).strip():
+        return None
+    name = str(t["name"]).strip()
+    keywords = t.get("sample_keywords") or []
+    if isinstance(keywords, str):
+        keywords = [k.strip() for k in keywords.split(",") if k.strip()]
+    sentiment = str(t.get("sentiment", "mixed")).lower()
+    return {
+        "name": name,
+        "description": str(t.get("description") or f"Customer feedback regarding {name}"),
+        "review_count": _to_int(t.get("review_count"), max(1, total // 10)),
+        "avg_rating": _to_float(t.get("avg_rating"), 2.5),
+        "sentiment": sentiment if sentiment in ("negative", "positive", "mixed") else "mixed",
+        "sample_keywords": [str(k) for k in keywords][:8] or [name.lower()],
+    }
+
+
+def _normalize_analysis(data: Dict, metrics: Dict, sampled: List[Review]) -> AnalysisResult:
+    """Coerce a model response into a valid AnalysisResult, filling gaps from the real dataset."""
+    total = metrics["total"]
+
+    themes = [nt for nt in (_normalize_theme(t, total) for t in data.get("themes") or []) if nt]
+    themes_by_name = {t["name"].lower(): t for t in themes}
+
+    top = []
+    for item in data.get("top_themes") or []:
+        raw_name = item if isinstance(item, str) else item.get("name", "") if isinstance(item, dict) else ""
+        nt = themes_by_name.get(str(raw_name).strip().lower()) or _normalize_theme(item, total)
+        if nt and nt["name"].lower() not in {x["name"].lower() for x in top}:
+            top.append(nt)
+    for t in sorted(themes, key=lambda x: x["review_count"], reverse=True):
+        if len(top) >= 3:
+            break
+        if t["name"].lower() not in {x["name"].lower() for x in top}:
+            top.append(t)
+
+    quotes = []
+    for q in data.get("user_quotes") or []:
+        if isinstance(q, dict) and str(q.get("quote", "")).strip():
+            quotes.append({
+                "quote": str(q["quote"]).strip(),
+                "reviewer": str(q.get("reviewer") or "Anonymous"),
+                "rating": min(5, max(1, _to_int(q.get("rating"), 3))),
+                "theme": str(q.get("theme") or (top[0]["name"] if top else "General")),
+            })
+    # Back-fill with real verbatim reviews from the sample (never invented text)
+    for r in sorted(sampled, key=lambda x: x.rating):
+        if len(quotes) >= 3:
+            break
+        if r.review_text not in {q["quote"] for q in quotes}:
+            text = r.review_text.replace("\n", " ").strip()
+            quotes.append({
+                "quote": text if len(text) <= 200 else text[:197] + "...",
+                "reviewer": r.reviewer, "rating": r.rating,
+                "theme": top[0]["name"] if top else "General",
+            })
+
+    fc = data.get("fee_confusion") if isinstance(data.get("fee_confusion"), dict) else {}
+    kw = metrics.get("keyword_frequencies", {})
+    fee_mentions = sum(kw.get(k, 0) for k in ("exit load", "charge", "fee", "hidden", "gst", "deduction", "brokerage"))
+    misconceptions = fc.get("common_misconceptions") or []
+    if isinstance(misconceptions, str):
+        misconceptions = [misconceptions]
+    severity = str(fc.get("severity", "")).lower()
+    if severity not in ("low", "medium", "high", "critical"):
+        severity = "high" if fee_mentions >= total * 0.1 else "medium"
+    fee_confusion = {
+        "fee_name": str(fc.get("fee_name") or "Charges & Exit Load"),
+        "confusion_summary": str(fc.get("confusion_summary") or
+            f"Fee-related terms are mentioned {fee_mentions} times across {total} reviews, indicating unclear charge communication."),
+        "affected_review_count": _to_int(fc.get("affected_review_count"), fee_mentions),
+        "common_misconceptions": [str(m) for m in misconceptions if str(m).strip()][:6] or
+            ["Users are unsure which charges apply to their transactions."],
+        "severity": severity,
+    }
+
+    return AnalysisResult(
+        total_reviews=total,
+        date_range=metrics["date_range"],
+        themes=themes,
+        top_themes=top[:3],
+        user_quotes=quotes[:3],
+        fee_confusion=fee_confusion,
+    )

@@ -27,6 +27,7 @@ from models import (
     MCPActionRequest, WorkflowPayload, EmailDraft
 )
 from analyzer import load_reviews_from_csv, analyze_reviews
+from llm_client import LLMError
 from generator import (
     generate_all_content, build_workflow_payload, build_email_draft
 )
@@ -326,6 +327,41 @@ async def load_default_reviews():
     }
 
 
+ERROR_HINTS = {
+    "rate_limited": "Free-tier limits reset within a minute. Wait briefly and click Retry, or add a second provider key so Voxora can fall back automatically.",
+    "auth": "Open API Settings and paste a valid key.",
+    "quota": "Add credits to that provider account, or switch to another provider in API Settings.",
+    "no_api_key": "Open API Settings and add at least one provider key.",
+    "bad_model": "Open API Settings and pick a different model or provider.",
+    "network": "Check your internet connection, then click Retry.",
+    "truncated": "Click Retry. If it keeps happening, switch to a different provider in API Settings.",
+    "invalid_output": "Click Retry — the AI response was incomplete.",
+    "provider_down": "The AI provider is having issues. Retry in a moment or switch provider.",
+}
+
+
+def llm_error_response(stage: str, e: Exception) -> HTTPException:
+    """Turn an exception into a structured, user-safe API error (raw provider payloads stay in server logs)."""
+    if isinstance(e, LLMError):
+        logger.error(f"{stage} failed [{e.code}] via {e.provider or 'n/a'}: {e.user_message} | {e.detail}")
+        status = {"no_api_key": 400, "auth": 401, "rate_limited": 429}.get(e.code, 502)
+        return HTTPException(status, {
+            "code": e.code,
+            "message": e.user_message,
+            "hint": ERROR_HINTS.get(e.code, "Please click Retry."),
+            "retryable": e.retryable,
+            "stage": stage,
+        })
+    logger.exception(f"{stage} failed with unexpected error")
+    return HTTPException(500, {
+        "code": "internal",
+        "message": f"{stage} failed due to an unexpected server error.",
+        "hint": "Please click Retry. If the problem persists, reload the reviews in Step 1.",
+        "retryable": True,
+        "stage": stage,
+    })
+
+
 @app.post("/api/analyze")
 async def run_analysis():
     """Step 1: Analyze reviews — theme clustering, quote extraction, fee detection."""
@@ -340,10 +376,27 @@ async def run_analysis():
     if not workflow_state["reviews_loaded"]:
         raise HTTPException(400, "No reviews loaded. Scrape or load reviews first.")
 
+    if workflow_state["step"] == "analyzing":
+        raise HTTPException(409, {
+            "code": "in_progress",
+            "message": "Analysis is already running.",
+            "hint": "Please wait for the current analysis to finish.",
+            "retryable": False,
+            "stage": "Analysis",
+        })
+
     workflow_state["step"] = "analyzing"
 
     try:
         reviews = load_reviews_from_csv(workflow_state["reviews_path"])
+        if not reviews:
+            raise HTTPException(400, {
+                "code": "no_reviews",
+                "message": "The loaded review file has no usable review text.",
+                "hint": "Go back to Step 1 and harvest or upload reviews again.",
+                "retryable": False,
+                "stage": "Analysis",
+            })
         analysis = await analyze_reviews(reviews)
 
         workflow_state["analysis"] = analysis.model_dump()
@@ -353,9 +406,12 @@ async def run_analysis():
             "status": "success",
             "analysis": analysis.model_dump()
         }
+    except HTTPException:
+        workflow_state["step"] = "reviews_loaded"
+        raise
     except Exception as e:
         workflow_state["step"] = "reviews_loaded"
-        raise HTTPException(500, f"Analysis failed: {str(e)}")
+        raise llm_error_response("Analysis", e)
 
 
 @app.post("/api/generate")
@@ -460,7 +516,7 @@ async def run_generation():
         }
     except Exception as e:
         workflow_state["step"] = "analyzed"
-        raise HTTPException(500, f"Generation failed: {str(e)}")
+        raise llm_error_response("Generation", e)
 
 
 @app.post("/api/prepare-actions")

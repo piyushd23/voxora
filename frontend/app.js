@@ -684,6 +684,52 @@ function filterReviewsTable() {
 
 // ── Step 2: AI Analysis (Mandatory Key Enforced) ──────────────────────────────
 
+// Builds an Error from a failed API response; handles structured {detail: {message, hint, code}},
+// plain-string details, and non-JSON bodies (proxy/HTML error pages).
+async function parseApiError(response, fallback) {
+  let detail = null;
+  try {
+    const body = await response.json();
+    detail = body.detail ?? body;
+  } catch (_) {
+    detail = null;
+  }
+  const info = (detail && typeof detail === 'object') ? detail : { message: typeof detail === 'string' ? detail : '' };
+  const err = new Error(info.message || `${fallback} (HTTP ${response.status})`);
+  err.code = info.code || (response.status === 429 ? 'rate_limited' : 'http_' + response.status);
+  err.hint = info.hint || '';
+  err.retryable = info.retryable !== false;
+  return err;
+}
+
+function showAnalysisError(err) {
+  const panel = document.getElementById('analysisErrorPanel');
+  if (!panel) return;
+  const titles = {
+    rate_limited: 'AI provider is busy (rate limit)',
+    auth: 'API key was rejected',
+    quota: 'AI provider credits exhausted',
+    no_api_key: 'No API key configured',
+    network: 'Connection problem',
+    server_unreachable: 'Voxora server is not reachable',
+    timeout: 'Analysis took too long',
+    in_progress: 'Analysis already running'
+  };
+  const needsSettings = ['auth', 'quota', 'no_api_key', 'bad_model'].includes(err.code);
+  document.getElementById('analysisErrorTitle').textContent = titles[err.code] || "Analysis couldn't be completed";
+  document.getElementById('analysisErrorMessage').textContent = err.message;
+  document.getElementById('analysisErrorHint').textContent = err.hint || '';
+  document.getElementById('analysisRetryBtn').style.display = err.retryable === false && err.code !== 'in_progress' ? 'none' : '';
+  document.getElementById('analysisSettingsBtn').style.display = needsSettings ? '' : 'none';
+  panel.style.display = 'flex';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideAnalysisError() {
+  const panel = document.getElementById('analysisErrorPanel');
+  if (panel) panel.style.display = 'none';
+}
+
 async function runAnalysis() {
   // Mandatory API Key Verification
   if (!state.isApiKeyActive) {
@@ -691,38 +737,67 @@ async function runAnalysis() {
     openApiKeyModal();
     return;
   }
+  if (state.analysisInFlight) return;
+  state.analysisInFlight = true;
+  hideAnalysisError();
 
   const reviewTotal = state.reviews ? state.reviews.review_count : 500;
   showLoading(`Analyzing ${reviewTotal.toLocaleString()} customer reviews with AI...\nExecuting statistical aggregation, theme clustering, and fee friction detection`);
   updateStatus('Analyzing...', 'processing');
-  
+
+  // Provider retries + fallback can take a while on free tiers; cap the wait so the UI never hangs
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 240000);
+
   try {
-    const response = await fetch(`${API_BASE}/api/analyze`, { method: 'POST' });
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.detail || 'Analysis failed');
+    let response;
+    try {
+      response = await fetch(`${API_BASE}/api/analyze`, { method: 'POST', signal: controller.signal });
+    } catch (netErr) {
+      const err = new Error(netErr.name === 'AbortError'
+        ? 'The AI provider did not respond within 4 minutes.'
+        : 'Could not connect to the Voxora backend.');
+      err.code = netErr.name === 'AbortError' ? 'timeout' : 'server_unreachable';
+      err.hint = netErr.name === 'AbortError'
+        ? 'Click Retry. If it keeps happening, switch provider in API Settings.'
+        : 'Make sure the backend server is running, then click Retry.';
+      err.retryable = true;
+      throw err;
     }
-    
+    if (!response.ok) {
+      throw await parseApiError(response, 'Analysis failed');
+    }
+
     const data = await response.json();
+    if (!data.analysis || !Array.isArray(data.analysis.themes)) {
+      const err = new Error('The server returned an incomplete analysis.');
+      err.code = 'invalid_output';
+      err.hint = 'Click Retry.';
+      throw err;
+    }
     state.analysis = data.analysis;
-    
+
     displayAnalysisResults(data.analysis);
-    
+
     state.maxUnlockedStep = Math.max(state.maxUnlockedStep || 1, 3);
     const s2Badge = document.getElementById('step2StatusBadge');
     if (s2Badge) s2Badge.textContent = 'Clustered';
 
     goToStep(2);
-    
+
     showToast('AI analysis completed — clusters and fee confusion mapped');
     updateStatus('Analysis Complete', '');
   } catch (err) {
-    showToast(`Analysis error: ${err.message}`, 'error');
-    updateStatus('Error', 'error');
-    if (err.message.includes('API key is mandatory')) {
+    console.error('Analysis error:', err);
+    showAnalysisError(err);
+    showToast(err.message, 'error');
+    updateStatus('Analysis Failed', 'error');
+    if (err.code === 'no_api_key') {
       openApiKeyModal();
     }
   } finally {
+    clearTimeout(timeoutId);
+    state.analysisInFlight = false;
     hideLoading();
   }
 }
@@ -814,7 +889,7 @@ async function runGeneration() {
     const response = await fetch(`${API_BASE}/api/generate`, { method: 'POST' });
     if (!response.ok) {
       const err = await response.json();
-      throw new Error(err.detail || 'Generation failed');
+      throw new Error((err.detail && err.detail.message) ? `${err.detail.message} ${err.detail.hint || ''}`.trim() : (err.detail || 'Generation failed'));
     }
     
     const data = await response.json();

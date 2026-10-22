@@ -14,6 +14,42 @@ import httpx
 load_dotenv()
 logger = logging.getLogger("llm_client")
 
+PROVIDER_LABELS = {
+    "groq": "Groq", "openai": "OpenAI", "grok": "Grok (xAI)",
+    "claude": "Anthropic Claude", "gemini": "Google Gemini"
+}
+
+
+class LLMError(ValueError):
+    """Provider failure carrying a stable code and a user-safe message (no raw provider payloads)."""
+
+    def __init__(self, code: str, user_message: str, provider: str = "", retryable: bool = True, detail: str = ""):
+        super().__init__(user_message)
+        self.code = code
+        self.user_message = user_message
+        self.provider = provider
+        self.retryable = retryable
+        self.detail = detail
+
+
+def _http_error(provider: str, status: int, body: str) -> LLMError:
+    """Map an HTTP failure to a user-safe LLMError."""
+    label = PROVIDER_LABELS.get(provider, provider)
+    lowered = body.lower()
+    if status == 429 and ("insufficient_quota" in lowered or "no credits" in lowered or "billing" in lowered and "quota" in lowered):
+        return LLMError("quota", f"{label} account has no remaining credits/quota. Add billing or use a different provider key.", provider, False, body[:500])
+    if status == 400 and "json_validate_failed" in lowered:
+        return LLMError("invalid_output", f"{label} produced malformed JSON.", provider, True, body[:500])
+    if status == 429:
+        return LLMError("rate_limited", f"{label} rate limit reached. Please wait about a minute and retry, or add another provider key.", provider, True, body[:500])
+    if status in (401, 403):
+        return LLMError("auth", f"{label} rejected the API key. Please check the key in settings.", provider, False, body[:500])
+    if status == 400 and ("model" in body.lower() and ("not" in body.lower() or "decommission" in body.lower())):
+        return LLMError("bad_model", f"The configured {label} model is unavailable. Please change the model in settings.", provider, False, body[:500])
+    if status >= 500:
+        return LLMError("provider_down", f"{label} is temporarily unavailable (HTTP {status}). Please retry shortly.", provider, True, body[:500])
+    return LLMError("provider_error", f"{label} returned an error (HTTP {status}).", provider, True, body[:500])
+
 
 def sanitize_api_key(raw_key: Optional[str]) -> str:
     """Extract and sanitize a valid API key token from input that might contain pasted chat text, timestamps, or quotes."""
@@ -123,7 +159,8 @@ async def call_openai_compatible(
     model: str,
     prompt: str,
     system_prompt: str = "You are an expert product intelligence AI. Return strictly valid JSON.",
-    max_tokens: int = 600
+    max_tokens: int = 600,
+    provider: str = "openai"
 ) -> Optional[str]:
     """Call OpenAI, Groq, or Grok via OpenAI-compatible chat completions API."""
     import asyncio
@@ -139,42 +176,60 @@ async def call_openai_compatible(
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.2,
-        "max_tokens": max_tokens
+        "max_tokens": max_tokens,
+        "response_format": {"type": "json_object"}
     }
-    if "openai.com" in base_url or "x.ai" in base_url:
-        payload["response_format"] = {"type": "json_object"}
+    # Reasoning models (gpt-oss) spend hidden tokens from max_tokens; keep reasoning short so the JSON isn't cut off
+    if "gpt-oss" in model:
+        payload["reasoning_effort"] = "low"
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(90.0, connect=15.0)) as client:
         for attempt in range(3):
             try:
                 resp = await client.post(url, headers=headers, json=payload)
                 resp.raise_for_status()
                 data = resp.json()
                 choices = data.get("choices", [])
-                if choices:
-                    msg = choices[0].get("message", {})
-                    content = msg.get("content") or ""
-                    if not content.strip() and msg.get("reasoning"):
-                        content = msg.get("reasoning")
-                    return content.strip()
+                if not choices:
+                    return None
+                choice = choices[0]
+                content = (choice.get("message", {}).get("content") or "").strip()
+                if choice.get("finish_reason") == "length":
+                    raise LLMError("truncated", "The AI response was cut off before completing.", provider, True)
+                return content
             except httpx.HTTPStatusError as exc:
-                if exc.response.status_code == 429 and attempt < 2:
+                status = exc.response.status_code
+                if status == 429 and attempt < 2 and _http_error(provider, status, exc.response.text).code != "quota":
                     wait_s = 6.0
-                    m = re.search(r"try again in ([\d\.]+)s", exc.response.text)
+                    m = re.search(r"try again in (?:(\d+)m)?([\d\.]+)s", exc.response.text)
                     if m:
                         try:
-                            wait_s = min(float(m.group(1)) + 1.0, 25.0)
+                            wait_s = float(m.group(1) or 0) * 60 + float(m.group(2)) + 1.0
                         except Exception:
                             wait_s = 6.0
+                    if wait_s > 30.0:
+                        # Long cooldown: let the caller fall back to another provider instead of hanging the UI
+                        raise _http_error(provider, status, exc.response.text)
                     logger.warning(f"Rate limited by {url}, waiting {wait_s:.1f}s before retry (attempt {attempt + 1}/3)...")
                     await asyncio.sleep(wait_s)
                     continue
-                logger.error(f"HTTP {exc.response.status_code} from {url}: {exc.response.text}")
-                raise ValueError(f"Provider API returned HTTP {exc.response.status_code}: {exc.response.text}")
+                if (status >= 500 or "json_validate_failed" in exc.response.text) and attempt < 2:
+                    logger.warning(f"HTTP {status} from {url}, retrying (attempt {attempt + 1}/3)...")
+                    await asyncio.sleep(2.0 * (attempt + 1))
+                    continue
+                logger.error(f"HTTP {status} from {url}: {exc.response.text}")
+                raise _http_error(provider, status, exc.response.text)
+            except (httpx.TimeoutException, httpx.TransportError) as exc:
+                if attempt < 2:
+                    logger.warning(f"Network error calling {url} ({type(exc).__name__}), retrying (attempt {attempt + 1}/3)...")
+                    await asyncio.sleep(2.0 * (attempt + 1))
+                    continue
+                label = PROVIDER_LABELS.get(provider, provider)
+                raise LLMError("network", f"Could not reach {label} (network timeout). Check your connection and retry.", provider, True, repr(exc))
     return None
 
 
-async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
+async def call_gemini(api_key: str, prompt: str, system_prompt: str = "", max_tokens: int = 4096) -> Optional[str]:
     """Call Google Gemini API with automatic fallback across standard models."""
     from google import genai
     from google.genai import types
@@ -193,12 +248,15 @@ async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
     for model_name in candidate_models:
         try:
             logger.info(f"Attempting Google Gemini generation with model '{model_name}'...")
-            response = client.models.generate_content(
+            import asyncio
+            response = await asyncio.to_thread(
+                client.models.generate_content,
                 model=model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
+                    system_instruction=system_prompt or None,
                     temperature=0.2,
-                    max_output_tokens=4096,
+                    max_output_tokens=max(max_tokens, 4096),
                     response_mime_type="application/json"
                 )
             )
@@ -219,11 +277,14 @@ async def call_gemini(api_key: str, prompt: str) -> Optional[str]:
             if is_404:
                 logger.warning(f"Gemini model '{model_name}' not available ({err_str[:120]}), trying next candidate model...")
                 continue
-            # For authentication or quota errors, re-raise immediately
-            raise e
+            if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                raise _http_error("gemini", 429, err_str)
+            if "API_KEY_INVALID" in err_str or "PERMISSION_DENIED" in err_str or "401" in err_str or "403" in err_str:
+                raise _http_error("gemini", 401, err_str)
+            raise LLMError("provider_error", "Google Gemini returned an error.", "gemini", True, err_str[:500])
 
     if last_err:
-        raise ValueError(f"Gemini generation failed on all models {candidate_models}: {str(last_err)}")
+        raise LLMError("bad_model", "No Google Gemini model is available for this key.", "gemini", False, str(last_err)[:500])
     return None
 
 
@@ -270,6 +331,8 @@ async def call_claude(
                     resp = await client.post(url, headers=headers, json=payload)
                     resp.raise_for_status()
                     data = resp.json()
+                    if data.get("stop_reason") == "max_tokens":
+                        raise LLMError("truncated", "The AI response was cut off before completing.", "claude", True)
                     content_blocks = data.get("content", [])
                     if content_blocks and content_blocks[0].get("text"):
                         return content_blocks[0]["text"].strip()
@@ -283,14 +346,55 @@ async def call_claude(
                         logger.warning(f"Claude model '{model_name}' not found, falling back...")
                         break
                     logger.error(f"HTTP {exc.response.status_code} from Anthropic: {err_text}")
-                    raise ValueError(f"Anthropic Claude API error: {err_text}")
+                    raise _http_error("claude", exc.response.status_code, err_text)
+                except LLMError:
+                    raise
+                except (httpx.TimeoutException, httpx.TransportError) as e:
+                    raise LLMError("network", "Could not reach Anthropic Claude (network timeout). Check your connection and retry.", "claude", True, repr(e))
                 except Exception as e:
                     last_err = e
                     break
 
     if last_err:
-        raise ValueError(f"Claude generation failed on candidate models: {str(last_err)}")
+        raise LLMError("bad_model", "No Anthropic Claude model is available for this key.", "claude", False, str(last_err)[:500])
     return None
+
+
+def _provider_chain(info: Dict) -> list:
+    """Active provider first, then every other configured provider as automatic fallback."""
+    order = ["groq", "openai", "grok", "claude", "gemini"]
+    configured = [p for p in order if info.get(f"has_{p}")]
+    active = info["active_provider"]
+    return ([active] if active in configured else []) + [p for p in configured if p != active]
+
+
+async def _call_provider(provider: str, prompt: str, system_prompt: str, max_tokens: int, model: Optional[str] = None) -> Optional[str]:
+    defaults = {
+        "groq": ("GROQ_MODEL", "openai/gpt-oss-120b"),
+        "openai": ("OPENAI_MODEL", "gpt-4o-mini"),
+        "grok": ("GROK_MODEL", "grok-2-latest"),
+        "claude": ("CLAUDE_MODEL", "claude-3-5-haiku-20241022"),
+        "gemini": ("GEMINI_MODEL", "gemini-2.0-flash"),
+    }
+    env_name, fallback_model = defaults[provider]
+    model = model or os.getenv(env_name, fallback_model)
+
+    if provider == "groq":
+        key = sanitize_api_key(os.getenv("GROQ_API_KEY") or os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY"))
+        return await call_openai_compatible("https://api.groq.com/openai/v1", key, model, prompt, system_prompt, max_tokens, provider)
+    if provider == "grok":
+        key = sanitize_api_key(os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY"))
+        return await call_openai_compatible("https://api.x.ai/v1", key, model, prompt, system_prompt, max_tokens, provider)
+    if provider == "openai":
+        key = sanitize_api_key(os.getenv("OPENAI_API_KEY"))
+        return await call_openai_compatible("https://api.openai.com/v1", key, model, prompt, system_prompt, max_tokens, provider)
+    if provider == "claude":
+        key = sanitize_api_key(os.getenv("CLAUDE_API_KEY") or os.getenv("ANTHROPIC_API_KEY"))
+        return await call_claude(key, prompt, model, system_prompt, max_tokens)
+    if provider == "gemini":
+        key = sanitize_api_key(os.getenv("GEMINI_API_KEY"))
+        return await call_gemini(key, prompt, system_prompt, max_tokens)
+    raise LLMError("no_provider", f"Unknown provider '{provider}'.", provider, False)
 
 
 async def generate_ai_completion(
@@ -299,112 +403,44 @@ async def generate_ai_completion(
     max_tokens: int = 600
 ) -> Tuple[str, str]:
     """
-    Generate completion using the active provider:
-    1. Groq if configured
-    2. Grok (xAI) if configured
-    3. OpenAI if configured
-    4. Claude (Anthropic) if configured
-    5. Gemini if configured
+    Generate a completion with the active provider, automatically falling back to
+    every other configured provider (Groq → OpenAI → Grok → Claude → Gemini) on failure.
 
-    Raises ValueError if no API key is configured (API key is mandatory).
+    Raises LLMError if no API key is configured or every provider fails.
     """
     info = get_active_provider_info()
-    provider = info["active_provider"]
+    chain = _provider_chain(info)
 
-    if provider == "none":
-        raise ValueError(
-            "API key is mandatory. Please configure your OpenAI, Grok (xAI), Claude, or Google Gemini API key to proceed."
+    if not chain:
+        raise LLMError(
+            "no_api_key",
+            "API key is mandatory. Please configure your OpenAI, Groq, Grok (xAI), Claude, or Google Gemini API key to proceed.",
+            retryable=False
         )
 
-    if provider == "groq":
-        groq_key = sanitize_api_key(os.getenv("GROQ_API_KEY") or os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY"))
-        model = info["active_model"]
-        logger.info(f"Dispatching prompt to Groq with model {model}...")
+    failures = []
+    for provider in chain:
+        model = info["active_model"] if provider == info["active_provider"] else None
+        logger.info(f"Dispatching prompt to {PROVIDER_LABELS[provider]}...")
         try:
-            result = await call_openai_compatible(
-                base_url="https://api.groq.com/openai/v1",
-                api_key=groq_key,
-                model=model,
-                prompt=prompt,
-                system_prompt=system_prompt,
-                max_tokens=max_tokens
-            )
-            if result:
-                return result, "groq"
-            raise ValueError("Empty response received from Groq API.")
+            result = await _call_provider(provider, prompt, system_prompt, max_tokens, model)
+            if result and result.strip():
+                return result, provider
+            failures.append(LLMError("empty", f"{PROVIDER_LABELS[provider]} returned an empty response.", provider))
+        except LLMError as e:
+            failures.append(e)
         except Exception as e:
-            logger.error(f"Groq API invocation failed: {e}")
-            raise ValueError(f"Groq API error: {str(e)}")
+            failures.append(LLMError("provider_error", f"{PROVIDER_LABELS[provider]} call failed.", provider, True, repr(e)[:500]))
+        last = failures[-1]
+        logger.warning(f"{PROVIDER_LABELS[provider]} failed [{last.code}]: {last.user_message} {last.detail[:300]}")
 
-    elif provider == "grok":
-        grok_key = sanitize_api_key(os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY"))
-        model = info["active_model"]
-        logger.info(f"Dispatching prompt to Grok (xAI) with model {model}...")
-        try:
-            result = await call_openai_compatible(
-                base_url="https://api.x.ai/v1",
-                api_key=grok_key,
-                model=model,
-                prompt=prompt,
-                system_prompt=system_prompt,
-                max_tokens=max_tokens
-            )
-            if result:
-                return result, "grok"
-            raise ValueError("Empty response received from Grok API.")
-        except Exception as e:
-            logger.error(f"Grok API invocation failed: {e}")
-            raise ValueError(f"Grok API error: {str(e)}")
-
-    elif provider == "openai":
-        openai_key = sanitize_api_key(os.getenv("OPENAI_API_KEY"))
-        model = info["active_model"]
-        logger.info(f"Dispatching prompt to OpenAI with model {model}...")
-        try:
-            result = await call_openai_compatible(
-                base_url="https://api.openai.com/v1",
-                api_key=openai_key,
-                model=model,
-                prompt=prompt,
-                system_prompt=system_prompt,
-                max_tokens=max_tokens
-            )
-            if result:
-                return result, "openai"
-            raise ValueError("Empty response received from OpenAI API.")
-        except Exception as e:
-            logger.error(f"OpenAI API invocation failed: {e}")
-            raise ValueError(f"OpenAI API error: {str(e)}")
-
-    elif provider == "claude":
-        claude_key = sanitize_api_key(os.getenv("CLAUDE_API_KEY") or os.getenv("ANTHROPIC_API_KEY"))
-        model = info["active_model"]
-        logger.info(f"Dispatching prompt to Anthropic Claude with model {model}...")
-        try:
-            result = await call_claude(
-                api_key=claude_key,
-                prompt=prompt,
-                model=model,
-                system_prompt=system_prompt,
-                max_tokens=max_tokens
-            )
-            if result:
-                return result, "claude"
-            raise ValueError("Empty response received from Anthropic Claude API.")
-        except Exception as e:
-            logger.error(f"Claude API invocation failed: {e}")
-            raise ValueError(f"Claude API error: {str(e)}")
-
-    elif provider == "gemini":
-        gemini_key = sanitize_api_key(os.getenv("GEMINI_API_KEY"))
-        logger.info(f"Dispatching prompt to Google Gemini ({info['active_model']})...")
-        try:
-            result = await call_gemini(gemini_key, prompt)
-            if result:
-                return result, "gemini"
-            raise ValueError("Empty response received from Gemini API.")
-        except Exception as e:
-            logger.error(f"Gemini API invocation failed: {e}")
-            raise ValueError(f"Gemini API error: {str(e)}")
-
-    raise ValueError("No active AI provider configured. API key is mandatory.")
+    # Every provider failed — surface the most actionable reason
+    primary = next((f for f in failures if f.retryable), failures[0])
+    tried = ", ".join(PROVIDER_LABELS[p] for p in chain)
+    raise LLMError(
+        primary.code,
+        primary.user_message if len(chain) == 1 else f"{primary.user_message} (Tried: {tried}.)",
+        primary.provider,
+        any(f.retryable for f in failures),
+        " | ".join(f"{f.provider}:{f.code}:{f.detail[:200]}" for f in failures)
+    )
